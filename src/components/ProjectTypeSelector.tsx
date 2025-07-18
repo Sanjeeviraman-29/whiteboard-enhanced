@@ -86,7 +86,7 @@ export function ProjectTypeSelector({ onProjectTypeSelect }: ProjectTypeSelector
         <div className="text-center mb-12 animate-fade-in">
           <div className="flex items-center justify-center mb-6">
             <Sparkles className="w-8 h-8 text-ai-primary mr-3" />
-            <h1 className="text-4xl md:text-6xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-6xl font-bold text-white">
               Infinite Canvas
             </h1>
           </div>
