@@ -15,6 +15,10 @@ const AppLayout: React.FC = () => {
   const [strokeWidth, setStrokeWidth] = useState<number>(4);
   const [shapeType, setShapeType] = useState<"rectangle" | "circle">("rectangle");
 
+  // Add new state for text styling
+  const [textFontFamily, setTextFontFamily] = useState<string>("Inter, Arial, sans-serif");
+  const [textFontWeight, setTextFontWeight] = useState<"normal" | "bold" | "italic">("normal");
+
   // Project name and background
   const [projectName, setProjectName] = useState("Infinite Canvas");
   const [transparentBg, setTransparentBg] = useState(false);
@@ -69,6 +73,11 @@ const AppLayout: React.FC = () => {
           onStrokeWidthChange={setStrokeWidth}
           shapeType={shapeType}
           onShapeTypeChange={setShapeType}
+          // New text styling props
+          textFontFamily={textFontFamily}
+          onTextFontFamilyChange={setTextFontFamily}
+          textFontWeight={textFontWeight}
+          onTextFontWeightChange={setTextFontWeight}
         />
         <CanvasWorkspace
           ref={canvasRef}
