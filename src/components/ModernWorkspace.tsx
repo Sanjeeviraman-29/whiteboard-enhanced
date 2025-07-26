@@ -1389,14 +1389,8 @@ const ModernWorkspace: React.FC = () => {
                   handleAIAutoComplete();
                 } else if (tool.id === 'text-to-image') {
                   handleTextToImage();
-                } else if (tool.id === 'annotation') {
-                  setSelectedTool(tool.id);
-                  setAnnotationMode('note');
-                } else if (tool.id === 'flow') {
-                  setSelectedTool(tool.id);
                 } else {
                   setSelectedTool(tool.id);
-                  setAnnotationMode(null);
                 }
               }}
               title={tool.label}
