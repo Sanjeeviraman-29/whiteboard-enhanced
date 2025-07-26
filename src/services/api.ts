@@ -344,14 +344,8 @@ class APIService {
 
   // Analytics
   async trackUsage(action: string, metadata: Record<string, any>): Promise<void> {
-    try {
-      await this.request('/api/analytics/track', {
-        method: 'POST',
-        body: JSON.stringify({ action, metadata, timestamp: new Date().toISOString() }),
-      });
-    } catch (error) {
-      // Completely silent - no logging, no errors
-    }
+    // Completely disabled - no network requests, no operations
+    return Promise.resolve();
   }
 }
 
