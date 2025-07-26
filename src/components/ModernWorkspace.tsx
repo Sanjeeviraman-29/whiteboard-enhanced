@@ -312,11 +312,20 @@ const ModernWorkspace: React.FC = () => {
         }
       };
       setElements(prev => [...prev, newElement]);
-    } else if (selectedTool === 'annotation' && annotationMode) {
-      addAnnotation(pos.x, pos.y, annotationMode);
-    } else if (selectedTool === 'flow') {
-      // Start flow connection
-      setLastPos(pos);
+    } else if (selectedTool === 'line') {
+      const lineElement: CanvasElement = {
+        id: Date.now().toString(),
+        type: 'line',
+        x: pos.x,
+        y: pos.y,
+        width: 0,
+        height: 0,
+        properties: {
+          stroke: strokeColor,
+          strokeWidth: strokeWidth
+        }
+      };
+      setElements(prev => [...prev, lineElement]);
     } else if (selectedTool === 'text') {
       const textElement: CanvasElement = {
         id: Date.now().toString(),
