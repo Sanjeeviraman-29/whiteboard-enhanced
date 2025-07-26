@@ -529,90 +529,216 @@ const ModernWorkspace: React.FC = () => {
   const generateAutoCompleteSuggestions = (currentElements: CanvasElement[]): CanvasElement[] => {
     const suggestions: CanvasElement[] = [];
 
-    // Analyze patterns in current elements
-    const shapes = currentElements.filter(el => el.type === 'rectangle' || el.type === 'circle');
-    const texts = currentElements.filter(el => el.type === 'text');
+    // Get lines for shape completion analysis
+    const lines = currentElements.filter(el => el.type === 'line');
+    const rectangles = currentElements.filter(el => el.type === 'rectangle');
+    const circles = currentElements.filter(el => el.type === 'circle');
 
-    // If there are shapes but no text, suggest adding labels
-    if (shapes.length > 0 && texts.length === 0) {
-      shapes.forEach((shape, index) => {
+    // SMART SQUARE/RECTANGLE COMPLETION
+    if (lines.length >= 3) {
+      const incompleteSquare = detectIncompleteSquare(lines);
+      if (incompleteSquare) {
         suggestions.push({
-          id: `ai-text-${Date.now()}-${index}`,
-          type: 'text',
-          x: shape.x + shape.width / 4,
-          y: shape.y + shape.height / 2,
-          width: 80,
-          height: 20,
+          id: `ai-complete-square-${Date.now()}`,
+          type: 'line',
+          x: incompleteSquare.startX,
+          y: incompleteSquare.startY,
+          width: incompleteSquare.endX - incompleteSquare.startX,
+          height: incompleteSquare.endY - incompleteSquare.startY,
           properties: {
-            text: `Label ${index + 1}`,
-            fontSize: 14,
-            fill: '#333333',
-            fontFamily: 'Arial, sans-serif'
-          }
-        });
-      });
-    }
-
-    // If there are multiple shapes, suggest connecting flows
-    if (shapes.length >= 2) {
-      for (let i = 0; i < shapes.length - 1; i++) {
-        const from = shapes[i];
-        const to = shapes[i + 1];
-
-        suggestions.push({
-          id: `ai-flow-${Date.now()}-${i}`,
-          type: 'flow',
-          x: from.x + from.width,
-          y: from.y + from.height / 2,
-          width: to.x - (from.x + from.width),
-          height: (to.y + to.height / 2) - (from.y + from.height / 2),
-          properties: {
-            flowType: 'sequence',
-            stroke: '#4caf50',
-            strokeWidth: 2
+            stroke: '#FF4444',
+            strokeWidth: 3,
+            fill: 'transparent'
           }
         });
       }
     }
 
-    // If drawing looks like a face, complete it
-    const circles = currentElements.filter(el => el.type === 'circle');
+    // SMART TRIANGLE COMPLETION
+    if (lines.length === 2) {
+      const triangleCompletion = detectIncompleteTriangle(lines);
+      if (triangleCompletion) {
+        suggestions.push({
+          id: `ai-complete-triangle-${Date.now()}`,
+          type: 'line',
+          x: triangleCompletion.startX,
+          y: triangleCompletion.startY,
+          width: triangleCompletion.endX - triangleCompletion.startX,
+          height: triangleCompletion.endY - triangleCompletion.startY,
+          properties: {
+            stroke: '#FF4444',
+            strokeWidth: 3
+          }
+        });
+      }
+    }
+
+    // CIRCLE TO FACE COMPLETION
     if (circles.length === 1) {
-      const faceCircle = circles[0];
-      // Add eyes
+      const face = circles[0];
+      const eyeSize = Math.max(8, face.width * 0.08);
+
+      // Left eye
       suggestions.push({
-        id: `ai-eye1-${Date.now()}`,
+        id: `ai-eye-left-${Date.now()}`,
         type: 'circle',
-        x: faceCircle.x + faceCircle.width * 0.3,
-        y: faceCircle.y + faceCircle.height * 0.3,
-        width: faceCircle.width * 0.1,
-        height: faceCircle.height * 0.1,
+        x: face.x + face.width * 0.3,
+        y: face.y + face.height * 0.35,
+        width: eyeSize,
+        height: eyeSize,
         properties: { fill: '#000000', stroke: '#000000', strokeWidth: 1 }
       });
 
+      // Right eye
       suggestions.push({
-        id: `ai-eye2-${Date.now()}`,
+        id: `ai-eye-right-${Date.now()}`,
         type: 'circle',
-        x: faceCircle.x + faceCircle.width * 0.6,
-        y: faceCircle.y + faceCircle.height * 0.3,
-        width: faceCircle.width * 0.1,
-        height: faceCircle.height * 0.1,
+        x: face.x + face.width * 0.6,
+        y: face.y + face.height * 0.35,
+        width: eyeSize,
+        height: eyeSize,
         properties: { fill: '#000000', stroke: '#000000', strokeWidth: 1 }
       });
 
-      // Add smile
+      // Smile (curved line approximated)
       suggestions.push({
         id: `ai-smile-${Date.now()}`,
         type: 'line',
-        x: faceCircle.x + faceCircle.width * 0.3,
-        y: faceCircle.y + faceCircle.height * 0.7,
-        width: faceCircle.width * 0.4,
-        height: 0,
+        x: face.x + face.width * 0.35,
+        y: face.y + face.height * 0.65,
+        width: face.width * 0.3,
+        height: face.height * 0.1,
         properties: { stroke: '#000000', strokeWidth: 2 }
       });
     }
 
+    // HOUSE COMPLETION
+    if (rectangles.length === 1 && lines.length === 0) {
+      const house = rectangles[0];
+      // Add roof (triangle)
+      suggestions.push({
+        id: `ai-roof-1-${Date.now()}`,
+        type: 'line',
+        x: house.x,
+        y: house.y,
+        width: house.width / 2,
+        height: -house.height * 0.4,
+        properties: { stroke: '#8B4513', strokeWidth: 3 }
+      });
+
+      suggestions.push({
+        id: `ai-roof-2-${Date.now()}`,
+        type: 'line',
+        x: house.x + house.width / 2,
+        y: house.y - house.height * 0.4,
+        width: house.width / 2,
+        height: house.height * 0.4,
+        properties: { stroke: '#8B4513', strokeWidth: 3 }
+      });
+
+      // Add door
+      const doorWidth = house.width * 0.2;
+      const doorHeight = house.height * 0.6;
+      suggestions.push({
+        id: `ai-door-${Date.now()}`,
+        type: 'rectangle',
+        x: house.x + house.width * 0.4,
+        y: house.y + house.height - doorHeight,
+        width: doorWidth,
+        height: doorHeight,
+        properties: { fill: '#654321', stroke: '#654321', strokeWidth: 2 }
+      });
+
+      // Add window
+      const windowSize = house.width * 0.15;
+      suggestions.push({
+        id: `ai-window-${Date.now()}`,
+        type: 'rectangle',
+        x: house.x + house.width * 0.7,
+        y: house.y + house.height * 0.3,
+        width: windowSize,
+        height: windowSize,
+        properties: { fill: '#87CEEB', stroke: '#000000', strokeWidth: 2 }
+      });
+    }
+
+    // AUTO-LABEL SHAPES
+    const unlabeledShapes = currentElements.filter(el =>
+      (el.type === 'rectangle' || el.type === 'circle') &&
+      !currentElements.some(text => text.type === 'text' &&
+        Math.abs(text.x - el.x) < 50 && Math.abs(text.y - el.y) < 50)
+    );
+
+    unlabeledShapes.forEach((shape, index) => {
+      suggestions.push({
+        id: `ai-label-${Date.now()}-${index}`,
+        type: 'text',
+        x: shape.x + shape.width / 4,
+        y: shape.y + shape.height / 2,
+        width: 60,
+        height: 20,
+        properties: {
+          text: shape.type === 'circle' ? 'Circle' : 'Box',
+          fontSize: 14,
+          fill: '#000000',
+          fontFamily: 'Arial, sans-serif'
+        }
+      });
+    });
+
     return suggestions;
+  };
+
+  // Helper function to detect incomplete squares/rectangles
+  const detectIncompleteSquare = (lines: CanvasElement[]) => {
+    if (lines.length < 3) return null;
+
+    // Sort lines and find potential square pattern
+    const sortedLines = lines.sort((a, b) => a.x - b.x);
+
+    // Simple heuristic: if we have 3 lines that could form 3 sides of a rectangle
+    // Return the 4th side coordinates
+    const firstLine = sortedLines[0];
+    const lastLine = sortedLines[sortedLines.length - 1];
+
+    // Calculate where the missing line should be
+    const minX = Math.min(...lines.map(l => l.x));
+    const maxX = Math.max(...lines.map(l => l.x + l.width));
+    const minY = Math.min(...lines.map(l => l.y));
+    const maxY = Math.max(...lines.map(l => l.y + l.height));
+
+    // Return the missing line to complete the rectangle
+    return {
+      startX: minX,
+      startY: maxY,
+      endX: maxX,
+      endY: maxY
+    };
+  };
+
+  // Helper function to detect incomplete triangles
+  const detectIncompleteTriangle = (lines: CanvasElement[]) => {
+    if (lines.length !== 2) return null;
+
+    const line1 = lines[0];
+    const line2 = lines[1];
+
+    // Find the endpoints
+    const points = [
+      { x: line1.x, y: line1.y },
+      { x: line1.x + line1.width, y: line1.y + line1.height },
+      { x: line2.x, y: line2.y },
+      { x: line2.x + line2.width, y: line2.y + line2.height }
+    ];
+
+    // Find which points are connected and which need to be connected
+    // Return coordinates for the third line
+    return {
+      startX: points[0].x,
+      startY: points[0].y,
+      endX: points[3].x,
+      endY: points[3].y
+    };
   };
 
   // Text-to-Image generation function
