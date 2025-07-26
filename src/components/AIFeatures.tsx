@@ -70,16 +70,58 @@ const AIFeatures: React.FC<AIFeaturesProps> = ({
     setIsGeneratingImage(true);
     
     try {
-      // TODO: Connect to OpenAI DALL-E API here
-      // const response = await fetch('/api/generate-image', {
+      // TODO: Connect to AI Image Generation API
+      //
+      // Option 1: OpenAI DALL-E API
+      // const response = await fetch('https://api.openai.com/v1/images/generations', {
       //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ 
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     'Authorization': `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`
+      //   },
+      //   body: JSON.stringify({
+      //     model: "dall-e-3",
       //     prompt: imagePrompt,
       //     size: '1024x1024',
-      //     quality: 'standard'
+      //     quality: 'standard',
+      //     n: 1
       //   })
       // });
+      //
+      // Option 2: Stability AI API
+      // const response = await fetch('https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     'Authorization': `Bearer ${process.env.REACT_APP_STABILITY_API_KEY}`
+      //   },
+      //   body: JSON.stringify({
+      //     text_prompts: [{ text: imagePrompt }],
+      //     cfg_scale: 7,
+      //     height: 1024,
+      //     width: 1024,
+      //     steps: 20,
+      //     samples: 1
+      //   })
+      // });
+      //
+      // Option 3: Replicate API
+      // const response = await fetch('https://api.replicate.com/v1/predictions', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Authorization': `Token ${process.env.REACT_APP_REPLICATE_API_TOKEN}`,
+      //     'Content-Type': 'application/json'
+      //   },
+      //   body: JSON.stringify({
+      //     version: "ac732df83cea7fff18b8472768c88ad041fa750ff7682a21affe81863cbe77e4",
+      //     input: { prompt: imagePrompt }
+      //   })
+      // });
+      //
+      // For Tauri/Electron Desktop Apps:
+      // Use the built-in HTTP client or invoke backend commands
+      // Tauri: window.__TAURI__.http.fetch()
+      // Electron: Use ipcRenderer to communicate with main process
       
       // Simulate API call for demo
       await new Promise(resolve => setTimeout(resolve, 3000));
