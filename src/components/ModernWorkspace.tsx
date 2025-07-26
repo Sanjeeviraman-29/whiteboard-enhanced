@@ -419,19 +419,7 @@ const ModernWorkspace: React.FC = () => {
       setVideoSrc(url);
       console.log('Video loaded:', file.name);
 
-      // Background processing (completely non-blocking)
-      Promise.resolve().then(async () => {
-        try {
-          await apiService.uploadMedia(file, 'video');
-          await apiService.trackUsage('video_uploaded', {
-            size: file.size,
-            type: file.type,
-            name: file.name
-          });
-        } catch (error) {
-          // Silent background processing
-        }
-      }).catch(() => {});
+      // No background processing needed - all local
 
       // Reset filters and trim when new video is uploaded
       setVideoFilters({ brightness: 100, contrast: 100, saturation: 100, sepia: 0 });
