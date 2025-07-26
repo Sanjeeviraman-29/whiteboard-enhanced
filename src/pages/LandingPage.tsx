@@ -372,9 +372,11 @@ const LandingPage: React.FC = () => {
                 <Globe className="w-12 h-12 text-purple-400 mx-auto mb-4" />
                 <h3 className="text-xl font-semibold mb-2">Web App</h3>
                 <p className="text-gray-400 mb-4">Any browser</p>
-                <Button variant="outline" className="w-full border-purple-600 text-purple-400">
-                  Launch Web App
-                </Button>
+                <Link to="/canvas" className="w-full">
+                  <Button variant="outline" className="w-full border-purple-600 text-purple-400">
+                    Launch Web App
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 
