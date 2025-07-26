@@ -319,6 +319,27 @@ const ModernWorkspace: React.FC = () => {
         }
       };
       setElements(prev => [...prev, newElement]);
+    } else if (selectedTool === 'annotation' && annotationMode) {
+      addAnnotation(pos.x, pos.y, annotationMode);
+    } else if (selectedTool === 'flow') {
+      // Start flow connection
+      setLastPos(pos);
+    } else if (selectedTool === 'text') {
+      const textElement: CanvasElement = {
+        id: Date.now().toString(),
+        type: 'text',
+        x: pos.x,
+        y: pos.y,
+        width: 100,
+        height: 20,
+        properties: {
+          text: 'Click to edit',
+          fontSize: fontSize,
+          fill: strokeColor,
+          fontFamily: 'Arial, sans-serif'
+        }
+      };
+      setElements(prev => [...prev, textElement]);
     }
   };
 
