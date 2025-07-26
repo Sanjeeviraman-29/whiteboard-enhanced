@@ -1227,6 +1227,83 @@ const ModernWorkspace: React.FC = () => {
                       </div>
                     </div>
                   )}
+
+                  {/* AI Auto-Complete Overlay */}
+                  {selectedTool === 'ai-complete' && (
+                    <div className="absolute top-4 right-4 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-4 py-2 rounded-lg shadow-lg">
+                      <div className="flex items-center gap-2">
+                        <Brain className="w-4 h-4" />
+                        <span className="text-sm font-medium">AI Auto-Complete: Draw something for AI to complete!</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Annotation Mode Overlay */}
+                  {selectedTool === 'annotation' && (
+                    <div className="absolute top-4 right-4 bg-gradient-to-r from-green-600 to-teal-600 text-white px-4 py-2 rounded-lg shadow-lg">
+                      <div className="flex items-center gap-2">
+                        <Type className="w-4 h-4" />
+                        <span className="text-sm font-medium">Annotation Mode: Click to add notes</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Flow Mode Overlay */}
+                  {selectedTool === 'flow' && (
+                    <div className="absolute top-4 right-4 bg-gradient-to-r from-orange-600 to-red-600 text-white px-4 py-2 rounded-lg shadow-lg">
+                      <div className="flex items-center gap-2">
+                        <Zap className="w-4 h-4" />
+                        <span className="text-sm font-medium">Flow Mode: Click and drag to create connections</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Storyboard Panel */}
+                  <div className="absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur-md rounded-lg p-4 shadow-lg">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="font-semibold text-gray-900">Storyboard Frames</h3>
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          onClick={createNewFrame}
+                          className="bg-blue-600 text-white"
+                        >
+                          + New Frame
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setIsStoryboardMode(!isStoryboardMode)}
+                        >
+                          {isStoryboardMode ? 'Exit' : 'Story'} Mode
+                        </Button>
+                      </div>
+                    </div>
+
+                    {storyboardFrames.length > 0 && (
+                      <div className="flex gap-3 overflow-x-auto">
+                        {storyboardFrames.map((frame, index) => (
+                          <div
+                            key={frame.id}
+                            className={`flex-shrink-0 w-24 h-16 bg-gray-100 rounded border-2 cursor-pointer hover:bg-gray-200 transition-colors ${
+                              currentFrameId === frame.id ? 'border-blue-500' : 'border-gray-300'
+                            }`}
+                            onClick={() => loadFrame(frame.id)}
+                          >
+                            <div className="w-full h-full flex items-center justify-center text-xs text-gray-600">
+                              Frame {index + 1}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {storyboardFrames.length === 0 && (
+                      <div className="text-center text-gray-500 py-4">
+                        <p className="text-sm">Create your first frame to start visual storytelling!</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </TabsContent>
