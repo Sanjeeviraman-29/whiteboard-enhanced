@@ -941,10 +941,21 @@ const ModernWorkspace: React.FC = () => {
                 </div>
                 
                 {photoSrc && (
-                  <div className="w-80 bg-gray-50 p-4 border-l border-gray-200">
-                    <h3 className="font-semibold text-gray-900 mb-4">Adjustments</h3>
-                    
-                    <div className="space-y-4">
+                  <div className="w-80 bg-gray-50 p-4 border-l border-gray-200 overflow-y-auto">
+                    {/* Photo Info */}
+                    <div className="bg-blue-50 p-3 rounded-lg mb-4">
+                      <p className="text-sm text-blue-800">
+                        <strong>File:</strong> {photoFile?.name || 'Photo'}<br/>
+                        <strong>Size:</strong> {photoFile ? (photoFile.size / (1024 * 1024)).toFixed(2) : '0'} MB
+                      </p>
+                    </div>
+
+                    <h3 className="font-semibold text-gray-900 mb-4">Photo Editor</h3>
+
+                    {/* Basic Adjustments */}
+                    <div className="space-y-4 mb-6">
+                      <h4 className="font-medium text-gray-800">Basic Adjustments</h4>
+
                       <div>
                         <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-2">
                           <Sun className="w-4 h-4" />
@@ -959,7 +970,7 @@ const ModernWorkspace: React.FC = () => {
                         />
                         <span className="text-xs text-gray-500">{brightness}%</span>
                       </div>
-                      
+
                       <div>
                         <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-2">
                           <Contrast className="w-4 h-4" />
@@ -974,7 +985,7 @@ const ModernWorkspace: React.FC = () => {
                         />
                         <span className="text-xs text-gray-500">{contrast}%</span>
                       </div>
-                      
+
                       <div>
                         <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-2">
                           <Palette className="w-4 h-4" />
@@ -989,7 +1000,7 @@ const ModernWorkspace: React.FC = () => {
                         />
                         <span className="text-xs text-gray-500">{saturation}%</span>
                       </div>
-                      
+
                       <div>
                         <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-2">
                           <Eye className="w-4 h-4" />
@@ -1005,32 +1016,147 @@ const ModernWorkspace: React.FC = () => {
                         <span className="text-xs text-gray-500">{blur}px</span>
                       </div>
                     </div>
-                    
-                    <Button
-                      className="w-full mt-6 bg-gradient-to-r from-purple-600 to-pink-600 text-white"
-                      onClick={async () => {
-                        if (photoSrc) {
-                          try {
-                            const result = await apiService.processImage(photoSrc, {
-                              brightness,
-                              contrast,
-                              saturation,
-                              blur,
-                              enhance: true
-                            });
-                            if (result.processedUrl) {
-                              setPhotoSrc(result.processedUrl);
+
+                    {/* Color Adjustments */}
+                    <div className="space-y-4 mb-6">
+                      <h4 className="font-medium text-gray-800">Color Effects</h4>
+
+                      <div>
+                        <label className="text-sm font-medium text-gray-700 mb-2 block">Hue Rotate</label>
+                        <Slider
+                          value={[hue]}
+                          onValueChange={(value) => setHue(value[0])}
+                          min={-180}
+                          max={180}
+                          step={1}
+                        />
+                        <span className="text-xs text-gray-500">{hue}°</span>
+                      </div>
+
+                      <div>
+                        <label className="text-sm font-medium text-gray-700 mb-2 block">Sepia</label>
+                        <Slider
+                          value={[sepia]}
+                          onValueChange={(value) => setSepia(value[0])}
+                          min={0}
+                          max={100}
+                          step={1}
+                        />
+                        <span className="text-xs text-gray-500">{sepia}%</span>
+                      </div>
+
+                      <div>
+                        <label className="text-sm font-medium text-gray-700 mb-2 block">Grayscale</label>
+                        <Slider
+                          value={[grayscale]}
+                          onValueChange={(value) => setGrayscale(value[0])}
+                          min={0}
+                          max={100}
+                          step={1}
+                        />
+                        <span className="text-xs text-gray-500">{grayscale}%</span>
+                      </div>
+
+                      <div>
+                        <label className="text-sm font-medium text-gray-700 mb-2 block">Invert</label>
+                        <Slider
+                          value={[invert]}
+                          onValueChange={(value) => setInvert(value[0])}
+                          min={0}
+                          max={100}
+                          step={1}
+                        />
+                        <span className="text-xs text-gray-500">{invert}%</span>
+                      </div>
+                    </div>
+
+                    {/* Transform Controls */}
+                    <div className="space-y-4 mb-6">
+                      <h4 className="font-medium text-gray-800">Transform</h4>
+
+                      <div>
+                        <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-2">
+                          <RotateCw className="w-4 h-4" />
+                          Rotation
+                        </label>
+                        <Slider
+                          value={[rotation]}
+                          onValueChange={(value) => setRotation(value[0])}
+                          min={-180}
+                          max={180}
+                          step={1}
+                        />
+                        <span className="text-xs text-gray-500">{rotation}°</span>
+                      </div>
+
+                      <div className="flex gap-2">
+                        <Button
+                          variant={flipHorizontal ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => setFlipHorizontal(!flipHorizontal)}
+                          className="flex-1"
+                        >
+                          Flip H
+                        </Button>
+                        <Button
+                          variant={flipVertical ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => setFlipVertical(!flipVertical)}
+                          className="flex-1"
+                        >
+                          Flip V
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="space-y-2">
+                      <Button
+                        variant="outline"
+                        className="w-full"
+                        onClick={resetPhotoFilters}
+                      >
+                        Reset All Filters
+                      </Button>
+
+                      <Button
+                        className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white"
+                        onClick={async () => {
+                          if (photoSrc) {
+                            try {
+                              const result = await apiService.processImage(photoSrc, {
+                                brightness,
+                                contrast,
+                                saturation,
+                                blur,
+                                hue,
+                                sepia,
+                                grayscale,
+                                invert,
+                                enhance: true
+                              });
+                              if (result.processedUrl) {
+                                setPhotoSrc(result.processedUrl);
+                              }
+                            } catch (error) {
+                              console.error('AI enhancement failed:', error);
+                              alert('AI enhancement is currently unavailable. Try again later.');
                             }
-                          } catch (error) {
-                            console.error('AI enhancement failed:', error);
-                            alert('AI enhancement is currently unavailable. Try again later.');
                           }
-                        }
-                      }}
-                    >
-                      <Sparkles className="w-4 h-4 mr-2" />
-                      AI Enhance
-                    </Button>
+                        }}
+                      >
+                        <Sparkles className="w-4 h-4 mr-2" />
+                        AI Enhance
+                      </Button>
+
+                      <Button
+                        className="w-full bg-blue-600 text-white"
+                        onClick={downloadEditedPhoto}
+                      >
+                        <Download className="w-4 h-4 mr-2" />
+                        Download Edited
+                      </Button>
+                    </div>
                   </div>
                 )}
               </div>
