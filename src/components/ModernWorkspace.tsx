@@ -770,36 +770,137 @@ const ModernWorkspace: React.FC = () => {
                 </div>
                 
                 {videoSrc && (
-                  <div className="p-4 border-t border-gray-200">
+                  <div className="p-4 border-t border-gray-200 space-y-4">
+                    {/* Video Info */}
+                    <div className="bg-blue-50 p-3 rounded-lg">
+                      <p className="text-sm text-blue-800">
+                        <strong>File:</strong> {videoFile?.name || 'Video'} |
+                        <strong> Size:</strong> {videoFile ? (videoFile.size / (1024 * 1024)).toFixed(2) : '0'} MB |
+                        <strong> Duration:</strong> {Math.floor(duration)}s
+                      </p>
+                    </div>
+
                     {/* Video Controls */}
                     <div className="flex items-center gap-4 mb-4">
                       <Button variant="outline" size="sm" onClick={togglePlayPause}>
                         {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
                       </Button>
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" onClick={() => seekToTime(Math.max(0, currentTime - 10))}>
                         <SkipBack className="w-4 h-4" />
                       </Button>
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" onClick={() => seekToTime(Math.min(duration, currentTime + 10))}>
                         <SkipForward className="w-4 h-4" />
                       </Button>
+
                       <div className="flex items-center gap-2">
                         <Volume2 className="w-4 h-4" />
                         <Slider
                           value={[volume]}
-                          onValueChange={(value) => setVolume(value[0])}
+                          onValueChange={(value) => {
+                            setVolume(value[0]);
+                            if (videoRef.current) videoRef.current.volume = value[0] / 100;
+                          }}
                           max={100}
                           step={1}
                           className="w-20"
                         />
+                        <span className="text-xs w-8">{volume}%</span>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs">Speed:</span>
+                        <select
+                          value={playbackSpeed}
+                          onChange={(e) => changePlaybackSpeed(Number(e.target.value))}
+                          className="text-xs border rounded px-1"
+                        >
+                          <option value={0.5}>0.5x</option>
+                          <option value={0.75}>0.75x</option>
+                          <option value={1}>1x</option>
+                          <option value={1.25}>1.25x</option>
+                          <option value={1.5}>1.5x</option>
+                          <option value={2}>2x</option>
+                        </select>
                       </div>
                     </div>
-                    
-                    {/* Timeline */}
-                    <div className="bg-gray-100 rounded-lg p-4">
-                      <div className="h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded opacity-80">
-                        <div className="flex items-center justify-center h-full text-white text-sm">
-                          Video Timeline - {Math.floor(currentTime)}s / {Math.floor(duration)}s
+
+                    {/* Video Timeline */}
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-xs text-gray-600">
+                        <span>{Math.floor(currentTime)}s</span>
+                        <span>{Math.floor(duration)}s</span>
+                      </div>
+                      <Slider
+                        value={[currentTime]}
+                        onValueChange={(value) => seekToTime(value[0])}
+                        max={duration}
+                        step={0.1}
+                        className="w-full"
+                      />
+                    </div>
+
+                    {/* Video Filters */}
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <h4 className="font-medium text-gray-900 mb-3">Video Filters</h4>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="text-xs text-gray-600 mb-1 block">Brightness</label>
+                          <Slider
+                            value={[videoFilters.brightness]}
+                            onValueChange={(value) => setVideoFilters(prev => ({ ...prev, brightness: value[0] }))}
+                            min={0}
+                            max={200}
+                            step={1}
+                          />
+                          <span className="text-xs text-gray-500">{videoFilters.brightness}%</span>
                         </div>
+                        <div>
+                          <label className="text-xs text-gray-600 mb-1 block">Contrast</label>
+                          <Slider
+                            value={[videoFilters.contrast]}
+                            onValueChange={(value) => setVideoFilters(prev => ({ ...prev, contrast: value[0] }))}
+                            min={0}
+                            max={200}
+                            step={1}
+                          />
+                          <span className="text-xs text-gray-500">{videoFilters.contrast}%</span>
+                        </div>
+                        <div>
+                          <label className="text-xs text-gray-600 mb-1 block">Saturation</label>
+                          <Slider
+                            value={[videoFilters.saturation]}
+                            onValueChange={(value) => setVideoFilters(prev => ({ ...prev, saturation: value[0] }))}
+                            min={0}
+                            max={200}
+                            step={1}
+                          />
+                          <span className="text-xs text-gray-500">{videoFilters.saturation}%</span>
+                        </div>
+                        <div>
+                          <label className="text-xs text-gray-600 mb-1 block">Sepia</label>
+                          <Slider
+                            value={[videoFilters.sepia]}
+                            onValueChange={(value) => setVideoFilters(prev => ({ ...prev, sepia: value[0] }))}
+                            min={0}
+                            max={100}
+                            step={1}
+                          />
+                          <span className="text-xs text-gray-500">{videoFilters.sepia}%</span>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-2 mt-4">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setVideoFilters({ brightness: 100, contrast: 100, saturation: 100, sepia: 0 })}
+                        >
+                          Reset Filters
+                        </Button>
+                        <Button variant="outline" size="sm">
+                          <Download className="w-4 h-4 mr-2" />
+                          Export Video
+                        </Button>
                       </div>
                     </div>
                   </div>
