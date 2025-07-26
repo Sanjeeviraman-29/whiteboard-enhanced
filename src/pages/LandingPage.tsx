@@ -358,10 +358,12 @@ const LandingPage: React.FC = () => {
                 <Monitor className="w-12 h-12 text-blue-400 mx-auto mb-4" />
                 <h3 className="text-xl font-semibold mb-2">Desktop</h3>
                 <p className="text-gray-400 mb-4">Windows, Mac, Linux</p>
-                <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600">
-                  <Download className="w-4 h-4 mr-2" />
-                  Download
-                </Button>
+                <Link to="/canvas" className="w-full">
+                  <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600">
+                    <Download className="w-4 h-4 mr-2" />
+                    Launch App
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 
