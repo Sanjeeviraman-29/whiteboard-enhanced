@@ -120,10 +120,18 @@ const ModernWorkspace: React.FC = () => {
   // Photo editing state
   const photoRef = useRef<HTMLImageElement>(null);
   const [photoSrc, setPhotoSrc] = useState<string>('');
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [brightness, setBrightness] = useState(100);
   const [contrast, setContrast] = useState(100);
   const [saturation, setSaturation] = useState(100);
   const [blur, setBlur] = useState(0);
+  const [hue, setHue] = useState(0);
+  const [sepia, setSepia] = useState(0);
+  const [grayscale, setGrayscale] = useState(0);
+  const [invert, setInvert] = useState(0);
+  const [rotation, setRotation] = useState(0);
+  const [flipHorizontal, setFlipHorizontal] = useState(false);
+  const [flipVertical, setFlipVertical] = useState(false);
 
   // Design components
   const [selectedComponent, setSelectedComponent] = useState<string>('');
