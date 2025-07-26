@@ -864,11 +864,11 @@ const ModernWorkspace: React.FC = () => {
     }
   };
 
-  const handleAISuggestions = async () => {
-    const suggestions = await getAISuggestions();
+  const handleAISuggestions = () => {
+    const suggestions = getAISuggestions();
     if (suggestions.length > 0) {
       const suggestionText = suggestions.join('\n• ');
-      alert(`AI Suggestions:\n\n• ${suggestionText}`);
+      alert(`💡 AI Suggestions:\n\n• ${suggestionText}`);
     }
   };
 
