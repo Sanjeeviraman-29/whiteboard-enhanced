@@ -308,11 +308,12 @@ const ModernWorkspace: React.FC = () => {
     setIsDrawing(false);
     setLastPos(null);
 
-    // Save to history
-    setHistory(prev => [...prev.slice(0, historyStep + 1), elements]);
-    setHistoryStep(prev => prev + 1);
+    // Save current state to history for undo/redo
+    const newHistory = [...history.slice(0, historyStep + 1), [...elements]];
+    setHistory(newHistory);
+    setHistoryStep(newHistory.length - 1);
 
-    // Update project without auto-save to prevent errors
+    // Update project
     const updatedProject = {
       ...currentProject,
       elements,
