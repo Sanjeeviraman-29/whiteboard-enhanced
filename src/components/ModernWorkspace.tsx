@@ -486,19 +486,7 @@ const ModernWorkspace: React.FC = () => {
       setPhotoSrc(url);
       console.log('Photo loaded:', file.name);
 
-      // Background processing (completely non-blocking)
-      Promise.resolve().then(async () => {
-        try {
-          await apiService.uploadMedia(file, 'image');
-          await apiService.trackUsage('photo_uploaded', {
-            size: file.size,
-            type: file.type,
-            name: file.name
-          });
-        } catch (error) {
-          // Silent background processing
-        }
-      }).catch(() => {});
+      // No background processing needed - all local
 
       // Reset all filters when new photo is uploaded
       setBrightness(100);
