@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Card, CardContent } from "../components/ui/card";
-import { 
-  Download, 
-  Play, 
-  Star, 
-  Zap, 
-  Palette, 
-  Video, 
-  Camera, 
-  PenTool, 
-  Layers, 
-  Brain, 
-  Users, 
+import {
+  Download,
+  Play,
+  Star,
+  Zap,
+  Palette,
+  Video,
+  Camera,
+  PenTool,
+  Layers,
+  Brain,
+  Users,
   Infinity,
   ArrowRight,
   CheckCircle,
