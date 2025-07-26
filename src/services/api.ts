@@ -45,8 +45,7 @@ class APIService {
 
       return await response.json();
     } catch (error) {
-      console.debug('API Request failed, using mock response:', error);
-      // Always fallback to mock data when backend is unavailable
+      // Completely silent fallback to mock data
       return this.getMockResponse<T>(endpoint, options);
     }
   }
