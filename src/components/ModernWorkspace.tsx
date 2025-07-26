@@ -862,7 +862,21 @@ const ModernWorkspace: React.FC = () => {
                     </div>
                   </div>
                   
-                  <Button className="w-full mt-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+                  <Button
+                    className="w-full mt-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white"
+                    onClick={async () => {
+                      const suggestions = await getAISuggestions();
+                      if (suggestions.length > 0) {
+                        const chosen = window.confirm(
+                          `AI suggests: "${suggestions[0]}"\n\nWould you like to apply this suggestion?`
+                        );
+                        if (chosen) {
+                          // Apply AI layout suggestion
+                          console.log('Applying AI layout suggestion:', suggestions[0]);
+                        }
+                      }
+                    }}
+                  >
                     <Brain className="w-4 h-4 mr-2" />
                     AI Layout Suggest
                   </Button>
