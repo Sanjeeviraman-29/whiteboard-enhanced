@@ -364,6 +364,105 @@ const ModernWorkspace: React.FC = () => {
     localStorage.setItem(`project-${updatedProject.id}`, JSON.stringify(updatedProject));
   };
 
+  // Storyboarding functions
+  const createNewFrame = () => {
+    const newFrame: StoryboardFrame = {
+      id: Date.now().toString(),
+      title: `Frame ${storyboardFrames.length + 1}`,
+      elements: [...elements],
+      notes: '',
+      duration: 3
+    };
+
+    setStoryboardFrames(prev => [...prev, newFrame]);
+    setCurrentFrameId(newFrame.id);
+
+    // Clear canvas for new frame
+    setElements([]);
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+  };
+
+  const loadFrame = (frameId: string) => {
+    const frame = storyboardFrames.find(f => f.id === frameId);
+    if (frame) {
+      setCurrentFrameId(frameId);
+      setElements(frame.elements);
+
+      // Redraw canvas
+      const canvas = canvasRef.current;
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+    }
+  };
+
+  const updateCurrentFrame = () => {
+    if (currentFrameId) {
+      setStoryboardFrames(prev =>
+        prev.map(frame =>
+          frame.id === currentFrameId
+            ? { ...frame, elements: [...elements] }
+            : frame
+        )
+      );
+    }
+  };
+
+  const addAnnotation = (x: number, y: number, type: 'note' | 'arrow' | 'highlight') => {
+    const annotation: CanvasElement = {
+      id: Date.now().toString(),
+      type: 'annotation',
+      x,
+      y,
+      width: type === 'note' ? 120 : 80,
+      height: type === 'note' ? 80 : 40,
+      properties: {
+        annotationType: type,
+        text: type === 'note' ? 'Add note...' : '',
+        fill: type === 'highlight' ? '#ffeb3b80' : '#ffffff',
+        stroke: '#2196f3',
+        strokeWidth: 2,
+        fontSize: 12
+      }
+    };
+
+    setElements(prev => [...prev, annotation]);
+    updateCurrentFrame();
+  };
+
+  const addFlowConnection = (fromX: number, fromY: number, toX: number, toY: number) => {
+    const flow: CanvasElement = {
+      id: Date.now().toString(),
+      type: 'flow',
+      x: fromX,
+      y: fromY,
+      width: toX - fromX,
+      height: toY - fromY,
+      properties: {
+        flowType: 'sequence',
+        stroke: '#4caf50',
+        strokeWidth: 3,
+        text: ''
+      }
+    };
+
+    setElements(prev => [...prev, flow]);
+    updateCurrentFrame();
+  };
+
   // AI-specific functions
   const handleAIEnhance = async () => {
     if (elements.length === 0) {
@@ -378,6 +477,120 @@ const ModernWorkspace: React.FC = () => {
       setHistory(prev => [...prev.slice(0, historyStep + 1), enhanced]);
       setHistoryStep(prev => prev + 1);
     }
+  };
+
+  // AI Auto-complete function
+  const handleAIAutoComplete = () => {
+    if (elements.length === 0) {
+      alert('Draw something first for AI to complete!');
+      return;
+    }
+
+    // Analyze current elements and suggest completions
+    const suggestions = generateAutoCompleteSuggestions(elements);
+    setAiSuggestions(suggestions);
+
+    // Apply suggestions
+    if (suggestions.length > 0) {
+      const completedElements = [...elements, ...suggestions];
+      setElements(completedElements);
+
+      // Save to history
+      const newHistory = [...history.slice(0, historyStep + 1), completedElements];
+      setHistory(newHistory);
+      setHistoryStep(newHistory.length - 1);
+
+      alert(`✨ AI completed your drawing with ${suggestions.length} new elements!`);
+    }
+  };
+
+  const generateAutoCompleteSuggestions = (currentElements: CanvasElement[]): CanvasElement[] => {
+    const suggestions: CanvasElement[] = [];
+
+    // Analyze patterns in current elements
+    const shapes = currentElements.filter(el => el.type === 'rectangle' || el.type === 'circle');
+    const texts = currentElements.filter(el => el.type === 'text');
+
+    // If there are shapes but no text, suggest adding labels
+    if (shapes.length > 0 && texts.length === 0) {
+      shapes.forEach((shape, index) => {
+        suggestions.push({
+          id: `ai-text-${Date.now()}-${index}`,
+          type: 'text',
+          x: shape.x + shape.width / 4,
+          y: shape.y + shape.height / 2,
+          width: 80,
+          height: 20,
+          properties: {
+            text: `Label ${index + 1}`,
+            fontSize: 14,
+            fill: '#333333',
+            fontFamily: 'Arial, sans-serif'
+          }
+        });
+      });
+    }
+
+    // If there are multiple shapes, suggest connecting flows
+    if (shapes.length >= 2) {
+      for (let i = 0; i < shapes.length - 1; i++) {
+        const from = shapes[i];
+        const to = shapes[i + 1];
+
+        suggestions.push({
+          id: `ai-flow-${Date.now()}-${i}`,
+          type: 'flow',
+          x: from.x + from.width,
+          y: from.y + from.height / 2,
+          width: to.x - (from.x + from.width),
+          height: (to.y + to.height / 2) - (from.y + from.height / 2),
+          properties: {
+            flowType: 'sequence',
+            stroke: '#4caf50',
+            strokeWidth: 2
+          }
+        });
+      }
+    }
+
+    // If drawing looks like a face, complete it
+    const circles = currentElements.filter(el => el.type === 'circle');
+    if (circles.length === 1) {
+      const faceCircle = circles[0];
+      // Add eyes
+      suggestions.push({
+        id: `ai-eye1-${Date.now()}`,
+        type: 'circle',
+        x: faceCircle.x + faceCircle.width * 0.3,
+        y: faceCircle.y + faceCircle.height * 0.3,
+        width: faceCircle.width * 0.1,
+        height: faceCircle.height * 0.1,
+        properties: { fill: '#000000', stroke: '#000000', strokeWidth: 1 }
+      });
+
+      suggestions.push({
+        id: `ai-eye2-${Date.now()}`,
+        type: 'circle',
+        x: faceCircle.x + faceCircle.width * 0.6,
+        y: faceCircle.y + faceCircle.height * 0.3,
+        width: faceCircle.width * 0.1,
+        height: faceCircle.height * 0.1,
+        properties: { fill: '#000000', stroke: '#000000', strokeWidth: 1 }
+      });
+
+      // Add smile
+      suggestions.push({
+        id: `ai-smile-${Date.now()}`,
+        type: 'line',
+        x: faceCircle.x + faceCircle.width * 0.3,
+        y: faceCircle.y + faceCircle.height * 0.7,
+        width: faceCircle.width * 0.4,
+        height: 0,
+        properties: { stroke: '#000000', strokeWidth: 2 }
+      });
+    }
+
+    return suggestions;
   };
 
   const handleAIGenerate = async () => {
