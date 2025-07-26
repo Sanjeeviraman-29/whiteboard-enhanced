@@ -976,7 +976,7 @@ const ModernWorkspace: React.FC = () => {
 
       // For filtered video, we'll create a processed frame as a demo
       // In a real implementation, this would process all frames
-      alert('�� Processing video with filters...');
+      alert('🎬 Processing video with filters...');
 
       // Capture current frame with filters applied
       video.pause();
@@ -1709,7 +1709,7 @@ const ModernWorkspace: React.FC = () => {
             </TabsContent>
 
             {/* Photo Editor Workspace */}
-            <TabsContent value="photo" className="flex-1 p-6">
+            <TabsContent value="photo" className="flex-1 p-6 h-full">
               <div className="bg-white rounded-xl shadow-lg overflow-hidden h-full flex">
                 <div className="flex-1 bg-gray-900 flex items-center justify-center relative">
                   {photoSrc ? (
