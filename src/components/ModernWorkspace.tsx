@@ -445,20 +445,39 @@ const ModernWorkspace: React.FC = () => {
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Store file reference
+      setPhotoFile(file);
+
       try {
         const result = await apiService.uploadMedia(file, 'image');
         setPhotoSrc(result.url);
+        console.log('Photo uploaded successfully:', file.name);
+
         // Track usage (non-blocking)
         apiService.trackUsage('photo_uploaded', {
           size: file.size,
-          dimensions: `${result.metadata?.width}x${result.metadata?.height}`
+          type: file.type,
+          name: file.name
         }).catch(() => {});
       } catch (error) {
-        console.debug('Using local photo URL');
-        // Fallback to local URL
+        console.debug('Using local photo URL for:', file.name);
+        // Always use local URL for device files
         const url = URL.createObjectURL(file);
         setPhotoSrc(url);
       }
+
+      // Reset all filters when new photo is uploaded
+      setBrightness(100);
+      setContrast(100);
+      setSaturation(100);
+      setBlur(0);
+      setHue(0);
+      setSepia(0);
+      setGrayscale(0);
+      setInvert(0);
+      setRotation(0);
+      setFlipHorizontal(false);
+      setFlipVertical(false);
     }
   };
 
