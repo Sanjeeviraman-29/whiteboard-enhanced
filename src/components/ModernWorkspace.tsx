@@ -2046,8 +2046,8 @@ const ModernWorkspace: React.FC = () => {
           </Tabs>
         </div>
 
-        {/* Properties Panel with Advanced AI Features */}
-        <div className="w-96 bg-white/90 backdrop-blur-md border-l border-gray-200 overflow-y-auto">
+        {/* Properties Panel with Advanced AI Features - Hidden on mobile */}
+        <div className="hidden md:block w-96 bg-white/90 backdrop-blur-md border-l border-gray-200 overflow-y-auto">
           <div className="p-4 space-y-6">
             {/* Basic Properties */}
             <div>
