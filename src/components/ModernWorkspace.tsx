@@ -751,7 +751,28 @@ const ModernWorkspace: React.FC = () => {
                       </div>
                     </div>
                     
-                    <Button className="w-full mt-6 bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+                    <Button
+                      className="w-full mt-6 bg-gradient-to-r from-purple-600 to-pink-600 text-white"
+                      onClick={async () => {
+                        if (photoSrc) {
+                          try {
+                            const result = await apiService.processImage(photoSrc, {
+                              brightness,
+                              contrast,
+                              saturation,
+                              blur,
+                              enhance: true
+                            });
+                            if (result.processedUrl) {
+                              setPhotoSrc(result.processedUrl);
+                            }
+                          } catch (error) {
+                            console.error('AI enhancement failed:', error);
+                            alert('AI enhancement is currently unavailable. Try again later.');
+                          }
+                        }
+                      }}
+                    >
                       <Sparkles className="w-4 h-4 mr-2" />
                       AI Enhance
                     </Button>
