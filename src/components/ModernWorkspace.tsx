@@ -512,8 +512,20 @@ const ModernWorkspace: React.FC = () => {
               key={tool.id}
               variant={selectedTool === tool.id ? "default" : "ghost"}
               size="sm"
-              className="w-12 h-12 flex flex-col items-center gap-1 text-xs"
-              onClick={() => setSelectedTool(tool.id)}
+              className={`w-12 h-12 flex flex-col items-center gap-1 text-xs ${
+                tool.id.includes('ai-') ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600' : ''
+              }`}
+              onClick={() => {
+                if (tool.id === 'ai-enhance') {
+                  handleAIEnhance();
+                } else if (tool.id === 'ai-generate') {
+                  handleAIGenerate();
+                } else if (tool.id === 'ai-layout') {
+                  handleAISuggestions();
+                } else {
+                  setSelectedTool(tool.id);
+                }
+              }}
               title={tool.label}
             >
               <tool.icon className="w-4 h-4" />
