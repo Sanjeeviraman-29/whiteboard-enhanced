@@ -983,12 +983,20 @@ const ModernWorkspace: React.FC = () => {
                           className="hidden"
                           id="photo-upload-new"
                         />
-                        <label htmlFor="photo-upload-new">
-                          <Button variant="outline" size="sm" className="bg-white/90 hover:bg-white">
-                            <Upload className="w-4 h-4 mr-2" />
-                            Upload New
-                          </Button>
-                        </label>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="bg-white/90 hover:bg-white"
+                          onClick={() => {
+                            const input = document.getElementById('photo-upload-new') as HTMLInputElement;
+                            if (input) {
+                              input.click();
+                            }
+                          }}
+                        >
+                          <Upload className="w-4 h-4 mr-2" />
+                          Upload New
+                        </Button>
                       </div>
                     </>
                   ) : (
