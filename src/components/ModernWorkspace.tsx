@@ -61,7 +61,7 @@ type Project = APIProject;
 
 interface CanvasElement {
   id: string;
-  type: 'rectangle' | 'circle' | 'text' | 'image' | 'brush' | 'line';
+  type: 'rectangle' | 'circle' | 'text' | 'image' | 'brush' | 'line' | 'annotation' | 'flow';
   x: number;
   y: number;
   width: number;
@@ -75,7 +75,27 @@ interface CanvasElement {
     fontFamily?: string;
     imageUrl?: string;
     points?: { x: number; y: number }[];
+    annotationType?: 'note' | 'arrow' | 'highlight';
+    flowType?: 'sequence' | 'decision' | 'process';
+    targetId?: string;
   };
+}
+
+interface StoryboardFrame {
+  id: string;
+  title: string;
+  elements: CanvasElement[];
+  thumbnail?: string;
+  duration?: number;
+  notes?: string;
+}
+
+interface FlowConnection {
+  id: string;
+  fromFrameId: string;
+  toFrameId: string;
+  label?: string;
+  type: 'sequence' | 'decision' | 'parallel';
 }
 
 const ModernWorkspace: React.FC = () => {
