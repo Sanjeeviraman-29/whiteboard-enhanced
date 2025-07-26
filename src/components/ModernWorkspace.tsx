@@ -367,9 +367,20 @@ const ModernWorkspace: React.FC = () => {
   };
 
   const stopDrawing = (e?: React.MouseEvent) => {
-    if (selectedTool === 'flow' && lastPos && e) {
+    if (selectedTool === 'line' && lastPos && e) {
       const pos = getCanvasPosition(e);
-      addFlowConnection(lastPos.x, lastPos.y, pos.x, pos.y);
+      // Update the last line element with final dimensions
+      setElements(prev => {
+        const newElements = [...prev];
+        if (newElements.length > 0) {
+          const lastElement = newElements[newElements.length - 1];
+          if (lastElement.type === 'line') {
+            lastElement.width = pos.x - lastElement.x;
+            lastElement.height = pos.y - lastElement.y;
+          }
+        }
+        return newElements;
+      });
     }
 
     setIsDrawing(false);
@@ -390,9 +401,6 @@ const ModernWorkspace: React.FC = () => {
 
     // Save to localStorage only (no network requests)
     localStorage.setItem(`project-${updatedProject.id}`, JSON.stringify(updatedProject));
-
-    // Update current storyboard frame if in storyboard mode
-    updateCurrentFrame();
   };
 
   // Removed storyboarding functions for cleaner interface
