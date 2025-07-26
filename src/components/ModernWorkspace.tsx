@@ -333,14 +333,14 @@ const ModernWorkspace: React.FC = () => {
     setHistory(prev => [...prev.slice(0, historyStep + 1), elements]);
     setHistoryStep(prev => prev + 1);
 
-    // Auto-save project
+    // Auto-save project (non-blocking)
     const updatedProject = {
       ...currentProject,
       elements,
       lastModified: new Date()
     };
     setCurrentProject(updatedProject);
-    saveProject(updatedProject);
+    saveProject(updatedProject); // No await - completely non-blocking
   };
 
   // AI-specific functions
