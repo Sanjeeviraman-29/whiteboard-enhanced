@@ -286,31 +286,34 @@ class APIService {
 
   // Media Processing
   async uploadMedia(file: File, type: 'image' | 'video'): Promise<{ url: string; metadata: any }> {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('type', type);
+    // Always use local URL - no network requests
+    return {
+      url: URL.createObjectURL(file),
+      metadata: {
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        lastModified: file.lastModified,
+        width: type === 'image' ? await this.getImageDimensions(file) : undefined,
+        height: type === 'image' ? await this.getImageDimensions(file) : undefined
+      }
+    };
+  }
 
-    try {
-      const response = await fetch(`${this.baseURL}/api/media/upload`, {
-        method: 'POST',
-        body: formData,
-      });
+  private async getImageDimensions(file: File): Promise<{ width: number; height: number } | undefined> {
+    return new Promise((resolve) => {
+      if (!file.type.startsWith('image/')) {
+        resolve(undefined);
+        return;
+      }
 
-      if (!response.ok) throw new Error('Upload failed');
-      
-      return await response.json();
-    } catch (error) {
-      // Fallback to local URL for development
-      return {
-        url: URL.createObjectURL(file),
-        metadata: {
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          lastModified: file.lastModified
-        }
+      const img = new Image();
+      img.onload = () => {
+        resolve({ width: img.naturalWidth, height: img.naturalHeight });
       };
-    }
+      img.onerror = () => resolve(undefined);
+      img.src = URL.createObjectURL(file);
+    });
   }
 
   async processImage(imageUrl: string, filters: Record<string, any>): Promise<{ processedUrl: string }> {
