@@ -134,9 +134,11 @@ const LandingPage: React.FC = () => {
               <a href="#how-it-works" className="text-gray-600 hover:text-blue-600 transition-colors">How It Works</a>
               <a href="#testimonials" className="text-gray-600 hover:text-blue-600 transition-colors">Testimonials</a>
               <a href="#download" className="text-gray-600 hover:text-blue-600 transition-colors">Download</a>
-              <Button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-                Start Creating
-              </Button>
+              <Link to="/canvas">
+                <Button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+                  Start Creating
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
