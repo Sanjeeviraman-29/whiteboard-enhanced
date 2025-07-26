@@ -166,16 +166,10 @@ const CanvasWorkspace = forwardRef<HTMLCanvasElement, CanvasWorkspaceProps>(
 
     // Function to push canvas snapshot to undo stack
     const pushCanvasSnapshot = () => {
-      const snapshot = captureCanvasSnapshot();
-      if (snapshot) {
-        setUndoStack(prev => {
-          // Limit undo stack to 50 entries
-          const newStack = [...prev, snapshot];
-          return newStack.slice(Math.max(0, newStack.length - 50));
-        });
-        // Clear redo stack when a new action is performed
-        setRedoStack([]);
-      }
+      // Add current state to history
+      setHistory(prev => [...prev, { shapes, textObjects }]);
+      // Clear redo stack when a new action is performed
+      setRedoStack([]);
     };
 
     // Comprehensive canvas setup with precise sizing
