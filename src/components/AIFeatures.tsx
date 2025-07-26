@@ -1,17 +1,55 @@
+/**
+ * AI Features Component for Digital Creator Whiteboard Platform
+ *
+ * This component provides advanced AI capabilities including:
+ * 1. Text-to-Image Generation (DALL-E, Stability AI, Replicate)
+ * 2. Smart Design Assistant (GPT-4, Gemini, Custom LLM)
+ *
+ * INTEGRATION GUIDE:
+ *
+ * Environment Variables Required:
+ * - REACT_APP_OPENAI_API_KEY (for DALL-E and GPT-4)
+ * - REACT_APP_STABILITY_API_KEY (for Stability AI)
+ * - REACT_APP_REPLICATE_API_TOKEN (for Replicate)
+ * - REACT_APP_GEMINI_API_KEY (for Google Gemini)
+ *
+ * Backend Integration Options:
+ * 1. Direct API calls (requires CORS handling)
+ * 2. Backend proxy server (recommended for production)
+ * 3. Serverless functions (Vercel, Netlify)
+ *
+ * Desktop App Compatibility:
+ * - Tauri: Use window.__TAURI__.http for secure API calls
+ * - Electron: Use ipcRenderer to communicate with main process
+ * - Store API keys in secure environment files
+ *
+ * Security Considerations:
+ * - Never expose API keys in frontend code
+ * - Use backend proxy for API calls in production
+ * - Implement rate limiting and usage tracking
+ * - Add user authentication for premium features
+ *
+ * Performance Optimizations:
+ * - Cache generated images locally
+ * - Implement image compression for faster loading
+ * - Use loading states and progressive enhancement
+ * - Add offline fallbacks for desktop apps
+ */
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { ScrollArea } from './ui/scroll-area';
-import { 
-  Wand2, 
-  Lightbulb, 
-  Send, 
-  Download, 
-  RefreshCw, 
-  Sparkles, 
-  ChevronDown, 
+import {
+  Wand2,
+  Lightbulb,
+  Send,
+  Download,
+  RefreshCw,
+  Sparkles,
+  ChevronDown,
   ChevronUp,
   Copy,
   Check,
