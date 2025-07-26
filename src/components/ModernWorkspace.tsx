@@ -1402,7 +1402,7 @@ const ModernWorkspace: React.FC = () => {
             </div>
 
             {/* Canvas Workspace */}
-            <TabsContent value="canvas" className="flex-1 p-6">
+            <TabsContent value="canvas" className="flex-1 p-6 h-full">
               <div className="bg-white rounded-xl shadow-lg overflow-hidden h-full flex">
                 <div className="flex-1 relative">
                   <canvas
@@ -1413,7 +1413,7 @@ const ModernWorkspace: React.FC = () => {
                     onMouseUp={stopDrawing}
                     onMouseLeave={stopDrawing}
                   />
-                  
+
                   {/* AI Suggestions Overlay */}
                   {selectedTool === 'ai-enhance' && (
                     <div className="absolute top-4 right-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg shadow-lg">
@@ -1435,7 +1435,7 @@ const ModernWorkspace: React.FC = () => {
                   )}
 
                   {/* Floating AI Assistant Button for Mobile */}
-                  <div className="absolute bottom-4 right-4 md:hidden">
+                  <div className="absolute bottom-4 right-4 lg:hidden">
                     <Button
                       onClick={() => setIsAIPanelOpen(!isAIPanelOpen)}
                       className="w-14 h-14 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg hover:shadow-xl transition-all hover:scale-105"
@@ -1446,7 +1446,7 @@ const ModernWorkspace: React.FC = () => {
 
                   {/* Mobile AI Panel Overlay */}
                   {isAIPanelOpen && (
-                    <div className="absolute inset-0 bg-black/50 md:hidden z-50 flex items-end">
+                    <div className="absolute inset-0 bg-black/50 lg:hidden z-50 flex items-end">
                       <div className="w-full bg-white rounded-t-3xl max-h-[80vh] overflow-hidden">
                         <div className="p-4 border-b flex items-center justify-between">
                           <h3 className="font-semibold text-lg">AI Assistant</h3>
@@ -1458,7 +1458,7 @@ const ModernWorkspace: React.FC = () => {
                             ✕
                           </Button>
                         </div>
-                        <div className="p-4 overflow-y-auto max-h-[60vh]">
+                        <div className="p-2 overflow-y-auto max-h-[60vh]">
                           <AIFeatures
                             onImageGenerated={(imageUrl, prompt) => {
                               const imageElement: CanvasElement = {
