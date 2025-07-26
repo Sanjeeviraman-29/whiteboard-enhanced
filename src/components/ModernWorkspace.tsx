@@ -599,7 +599,11 @@ const ModernWorkspace: React.FC = () => {
   };
 
   useEffect(() => {
-    applyPhotoFilters();
+    try {
+      applyPhotoFilters();
+    } catch (error) {
+      console.debug('Filter application failed:', error);
+    }
   }, [brightness, contrast, saturation, blur, hue, sepia, grayscale, invert, rotation, flipHorizontal, flipVertical]);
 
   // Initialize canvas
