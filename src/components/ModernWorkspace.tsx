@@ -478,6 +478,30 @@ const ModernWorkspace: React.FC = () => {
     applyVideoFilters();
   }, [videoFilters]);
 
+  const downloadEditedVideo = () => {
+    if (!videoSrc || !videoFile) {
+      alert('No video to download. Please upload a video first.');
+      return;
+    }
+
+    try {
+      // For now, we'll provide a simple download of the original file
+      // In a full implementation, you'd process the video with filters
+      const link = document.createElement('a');
+      link.href = videoSrc;
+      link.download = `edited-${videoFile.name}`;
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      alert(`Video downloading! Note: Filters are applied visually but not to the downloaded file. For full processing, professional video editing software would be needed.`);
+    } catch (error) {
+      console.error('Download failed:', error);
+      alert('Download failed. Please try again or save the video manually.');
+    }
+  };
+
   // Photo functions
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
