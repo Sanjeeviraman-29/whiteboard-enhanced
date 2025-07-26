@@ -517,18 +517,79 @@ const ModernWorkspace: React.FC = () => {
   const applyPhotoFilters = () => {
     const photo = photoRef.current;
     if (!photo) return;
-    
+
     photo.style.filter = `
-      brightness(${brightness}%) 
-      contrast(${contrast}%) 
-      saturate(${saturation}%) 
+      brightness(${brightness}%)
+      contrast(${contrast}%)
+      saturate(${saturation}%)
       blur(${blur}px)
+      hue-rotate(${hue}deg)
+      sepia(${sepia}%)
+      grayscale(${grayscale}%)
+      invert(${invert}%)
     `;
+
+    photo.style.transform = `
+      rotate(${rotation}deg)
+      scaleX(${flipHorizontal ? -1 : 1})
+      scaleY(${flipVertical ? -1 : 1})
+    `;
+  };
+
+  const resetPhotoFilters = () => {
+    setBrightness(100);
+    setContrast(100);
+    setSaturation(100);
+    setBlur(0);
+    setHue(0);
+    setSepia(0);
+    setGrayscale(0);
+    setInvert(0);
+    setRotation(0);
+    setFlipHorizontal(false);
+    setFlipVertical(false);
+  };
+
+  const downloadEditedPhoto = () => {
+    const photo = photoRef.current;
+    if (!photo || !photoSrc) return;
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    canvas.width = photo.naturalWidth;
+    canvas.height = photo.naturalHeight;
+
+    // Apply transformations to canvas
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.rotate((rotation * Math.PI) / 180);
+    ctx.scale(flipHorizontal ? -1 : 1, flipVertical ? -1 : 1);
+
+    // Apply filters
+    ctx.filter = `
+      brightness(${brightness}%)
+      contrast(${contrast}%)
+      saturate(${saturation}%)
+      blur(${blur}px)
+      hue-rotate(${hue}deg)
+      sepia(${sepia}%)
+      grayscale(${grayscale}%)
+      invert(${invert}%)
+    `;
+
+    ctx.drawImage(photo, -canvas.width / 2, -canvas.height / 2);
+
+    // Download the edited image
+    const link = document.createElement('a');
+    link.download = `edited-${photoFile?.name || 'photo'}.png`;
+    link.href = canvas.toDataURL();
+    link.click();
   };
 
   useEffect(() => {
     applyPhotoFilters();
-  }, [brightness, contrast, saturation, blur]);
+  }, [brightness, contrast, saturation, blur, hue, sepia, grayscale, invert, rotation, flipHorizontal, flipVertical]);
 
   // Initialize canvas
   useEffect(() => {
