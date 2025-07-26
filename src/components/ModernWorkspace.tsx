@@ -294,10 +294,67 @@ const ModernWorkspace: React.FC = () => {
   const stopDrawing = () => {
     setIsDrawing(false);
     setLastPos(null);
-    
+
     // Save to history
     setHistory(prev => [...prev.slice(0, historyStep + 1), elements]);
     setHistoryStep(prev => prev + 1);
+
+    // Auto-save project
+    const updatedProject = {
+      ...currentProject,
+      elements,
+      lastModified: new Date()
+    };
+    setCurrentProject(updatedProject);
+    saveProject(updatedProject);
+  };
+
+  // AI-specific functions
+  const handleAIEnhance = async () => {
+    if (elements.length === 0) {
+      alert('Add some elements to the canvas first!');
+      return;
+    }
+
+    const enhanced = await enhanceWithAI(elements);
+    if (enhanced && enhanced !== elements) {
+      setElements(enhanced);
+      // Save to history
+      setHistory(prev => [...prev.slice(0, historyStep + 1), enhanced]);
+      setHistoryStep(prev => prev + 1);
+    }
+  };
+
+  const handleAIGenerate = async () => {
+    const prompt = window.prompt('Describe what you want to create:');
+    if (!prompt) return;
+
+    const content = await generateAIContent(prompt, activeMode);
+    if (content) {
+      // Add generated content to canvas
+      if (content.url) {
+        const newElement: CanvasElement = {
+          id: Date.now().toString(),
+          type: 'image',
+          x: 50,
+          y: 50,
+          width: content.dimensions?.width || 200,
+          height: content.dimensions?.height || 200,
+          properties: {
+            imageUrl: content.url
+          }
+        };
+        setElements(prev => [...prev, newElement]);
+      }
+    }
+  };
+
+  const handleAISuggestions = async () => {
+    const suggestions = await getAISuggestions();
+    if (suggestions.length > 0) {
+      const suggestionText = suggestions.join('\n• ');
+      alert(`AI Suggestions:\n\n• ${suggestionText}`);
+    }
   };
 
   const undo = () => {
