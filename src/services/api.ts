@@ -52,78 +52,107 @@ class APIService {
   }
 
   private getMockResponse<T>(endpoint: string, options: RequestInit): T {
-    // Mock responses for development/offline mode
-    if (endpoint.includes('/projects') && options.method === 'POST') {
-      return { success: true, id: Date.now().toString() } as T;
-    }
-    
-    if (endpoint.includes('/projects/') && options.method === 'GET') {
-      return {
-        id: '1',
-        name: 'Sample Project',
-        type: 'canvas',
-        lastModified: new Date(),
-        elements: [],
-        settings: {}
-      } as T;
-    }
+    try {
+      // Mock responses for development/offline mode
+      if (endpoint.includes('/projects') && options.method === 'POST') {
+        return { success: true, id: Date.now().toString() } as T;
+      }
 
-    if (endpoint.includes('/ai/enhance')) {
-      return {
-        success: true,
-        data: {
-          elements: JSON.parse(options.body as string).elements,
-          enhancements: [
-            'Improved color harmony',
-            'Better composition balance',
-            'Enhanced visual hierarchy'
-          ]
-        },
-        suggestions: [
-          'Consider adding more contrast to your design',
-          'Try using complementary colors for better visual impact',
-          'The layout could benefit from more white space'
-        ],
-        confidence: 0.85
-      } as T;
-    }
+      if (endpoint.includes('/projects/') && options.method === 'GET') {
+        return {
+          id: '1',
+          name: 'Sample Project',
+          type: 'canvas',
+          lastModified: new Date(),
+          elements: [],
+          settings: {}
+        } as T;
+      }
 
-    if (endpoint.includes('/ai/generate')) {
-      const body = JSON.parse(options.body as string);
-      return {
-        success: true,
-        data: {
-          type: body.type,
-          content: this.generateMockContent(body.type, body.prompt),
-          metadata: {
-            generated_at: new Date().toISOString(),
-            model: 'gpt-4-vision',
-            confidence: 0.92
-          }
-        }
-      } as T;
-    }
-
-    if (endpoint.includes('/ai/suggest')) {
-      return {
-        success: true,
-        data: {
+      if (endpoint.includes('/ai/enhance')) {
+        const body = options.body ? JSON.parse(options.body as string) : { elements: [] };
+        return {
+          success: true,
+          data: {
+            elements: body.elements || [],
+            enhancements: [
+              'Improved color harmony',
+              'Better composition balance',
+              'Enhanced visual hierarchy'
+            ]
+          },
           suggestions: [
-            'Add a gradient background for modern appeal',
-            'Use rounded corners for a friendlier feel',
-            'Consider implementing a dark mode variant',
-            'Add subtle animations for better user experience'
+            'Consider adding more contrast to your design',
+            'Try using complementary colors for better visual impact',
+            'The layout could benefit from more white space'
           ],
-          layoutOptions: [
-            { name: 'Grid Layout', preview: '/mock/grid-preview.png' },
-            { name: 'Hero Section', preview: '/mock/hero-preview.png' },
-            { name: 'Card Grid', preview: '/mock/cards-preview.png' }
-          ]
-        }
-      } as T;
-    }
+          confidence: 0.85
+        } as T;
+      }
 
-    return { success: false, error: 'Mock response not implemented' } as T;
+      if (endpoint.includes('/ai/generate')) {
+        const body = options.body ? JSON.parse(options.body as string) : { type: 'text', prompt: '' };
+        return {
+          success: true,
+          data: {
+            type: body.type,
+            content: this.generateMockContent(body.type, body.prompt),
+            metadata: {
+              generated_at: new Date().toISOString(),
+              model: 'gpt-4-vision',
+              confidence: 0.92
+            }
+          }
+        } as T;
+      }
+
+      if (endpoint.includes('/ai/suggest')) {
+        return {
+          success: true,
+          data: {
+            suggestions: [
+              'Add a gradient background for modern appeal',
+              'Use rounded corners for a friendlier feel',
+              'Consider implementing a dark mode variant',
+              'Add subtle animations for better user experience'
+            ],
+            layoutOptions: [
+              { name: 'Grid Layout', preview: '/mock/grid-preview.png' },
+              { name: 'Hero Section', preview: '/mock/hero-preview.png' },
+              { name: 'Card Grid', preview: '/mock/cards-preview.png' }
+            ]
+          }
+        } as T;
+      }
+
+      if (endpoint.includes('/analytics/track')) {
+        return { success: true } as T;
+      }
+
+      if (endpoint.includes('/media/upload')) {
+        return {
+          url: 'https://picsum.photos/800/600?random=' + Date.now(),
+          metadata: {
+            name: 'uploaded-file',
+            size: 100000,
+            type: 'image/jpeg'
+          }
+        } as T;
+      }
+
+      if (endpoint.includes('/media/process')) {
+        return {
+          processedUrl: 'https://picsum.photos/800/600?random=' + Date.now(),
+          preview: 'https://picsum.photos/400/300?random=' + Date.now()
+        } as T;
+      }
+
+      // Default fallback
+      return { success: true, message: 'Mock response' } as T;
+    } catch (error) {
+      console.debug('Error in mock response generation:', error);
+      return { success: false, error: 'Mock response failed' } as T;
+    }
   }
 
   private generateMockContent(type: string, prompt: string): any {
