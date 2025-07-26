@@ -737,6 +737,10 @@ const ModernWorkspace: React.FC = () => {
               <Save className="w-4 h-4 mr-2" />
               Save
             </Button>
+            <Button variant="outline" size="sm" onClick={clearCanvas}>
+              <Trash2 className="w-4 h-4 mr-2" />
+              Clear
+            </Button>
             <Button variant="outline" size="sm">
               <Download className="w-4 h-4 mr-2" />
               Export
