@@ -103,7 +103,22 @@ const AIAssistant: React.FC = () => {
 
     // Creative ideas and inspiration
     if (lowerMessage.includes("idea") || lowerMessage.includes("inspiration") || lowerMessage.includes("creative")) {
-      return "Here are some creative ideas to spark inspiration:\n\n• **Mood Boards**: Collect visual references\n• **Color Stories**: Build palettes from nature\n• **Typography Mixing**: Combine serif and sans-serif\n• **Asymmetric Layouts**: Break traditional grids\n• **Micro-Interactions**: Delight in small details\n• **Bold Gradients**: Create dynamic backgrounds\n\nWhat project are you working on?";
+      return "Here are some creative ideas to spark inspiration:\n\n• **Mood Boards**: Collect visual references\n• **Color Stories**: Build palettes from nature\n• **Typography Mixing**: Combine serif and sans-serif\n• **Asymmetric Layouts**: Break traditional grids\n• **Micro-Interactions**: Delight in small details\n• **Bold Gradients**: Create dynamic backgrounds\n• **Text-to-Image**: Use our AI to generate images from descriptions\n\nWhat project are you working on?";
+    }
+
+    // Text to image suggestions
+    if (lowerMessage.includes("text to image") || lowerMessage.includes("generate image") || lowerMessage.includes("ai image")) {
+      return "Great! Our Text-to-Image feature can help you create visuals. Here are some effective prompt tips:\n\n• **Be Specific**: 'A red cartoon cat with a blue hat' vs 'cat'\n• **Style Keywords**: Add 'cartoon', 'realistic', 'sketch', 'watercolor'\n• **Composition**: Mention 'centered', 'close-up', 'wide view'\n• **Colors**: Specify color schemes like 'pastel colors' or 'bright neon'\n• **For Kids**: Try 'simple', 'cute', 'friendly', 'colorful'\n\nExample prompts:\n• 'Simple cartoon house with a red roof'\n• 'Friendly smiling sun with sunglasses'\n• 'Geometric pattern in blue and green'\n\nUse the Text→Image tool in the canvas to try it!";
+    }
+
+    // Auto-complete and AI assistance
+    if (lowerMessage.includes("auto complete") || lowerMessage.includes("ai complete") || lowerMessage.includes("finish drawing")) {
+      return "The AI Auto-Complete feature is perfect for learning! Here's how it helps:\n\n• **Shape Completion**: Start drawing a circle, AI adds facial features\n• **Pattern Recognition**: Draw some shapes, AI suggests connections\n• **Educational Aid**: Great for kids learning to draw\n• **Flow Diagrams**: AI can connect boxes with arrows\n• **Label Suggestions**: AI adds text labels to shapes\n\nJust draw something and click the 'AI Complete' tool. The AI will analyze your drawing and add helpful elements!";
+    }
+
+    // Storyboarding help
+    if (lowerMessage.includes("storyboard") || lowerMessage.includes("story") || lowerMessage.includes("frames")) {
+      return "Visual storytelling with storyboards is powerful! Here's how to use our storyboard features:\n\n• **Create Frames**: Each frame represents a scene or moment\n• **Add Annotations**: Use notes to describe actions or dialogue\n• **Flow Connections**: Connect frames to show sequence\n• **Scene Planning**: Plan your video or presentation flow\n• **Educational Stories**: Great for teaching narratives to kids\n\nTips for good storyboards:\n• Keep it simple and clear\n• Focus on key moments\n• Use arrows to show movement\n• Add brief descriptions\n\nTry creating your first frame with the 'New Frame' button!";
     }
 
     // Landing page design
