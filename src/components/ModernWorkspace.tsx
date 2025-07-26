@@ -1985,82 +1985,103 @@ const ModernWorkspace: React.FC = () => {
           </Tabs>
         </div>
 
-        {/* Properties Panel */}
-        <div className="w-80 bg-white/90 backdrop-blur-md border-l border-gray-200 p-4">
-          <h3 className="font-semibold text-gray-900 mb-4">Properties</h3>
-          
-          <div className="space-y-4">
+        {/* Properties Panel with Advanced AI Features */}
+        <div className="w-96 bg-white/90 backdrop-blur-md border-l border-gray-200 overflow-y-auto">
+          <div className="p-4 space-y-6">
+            {/* Basic Properties */}
             <div>
-              <label className="text-sm font-medium text-gray-700 mb-2 block">
-                Stroke Color
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="color"
-                  value={strokeColor}
-                  onChange={(e) => setStrokeColor(e.target.value)}
-                  className="w-12 h-8 rounded border border-gray-300"
-                />
-                <input
-                  type="text"
-                  value={strokeColor}
-                  onChange={(e) => setStrokeColor(e.target.value)}
-                  className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded"
-                />
+              <h3 className="font-semibold text-gray-900 mb-4">Properties</h3>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-700 mb-2 block">
+                    Stroke Color
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="color"
+                      value={strokeColor}
+                      onChange={(e) => setStrokeColor(e.target.value)}
+                      className="w-12 h-8 rounded border border-gray-300"
+                    />
+                    <input
+                      type="text"
+                      value={strokeColor}
+                      onChange={(e) => setStrokeColor(e.target.value)}
+                      className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium text-gray-700 mb-2 block">
+                    Fill Color
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="color"
+                      value={fillColor}
+                      onChange={(e) => setFillColor(e.target.value)}
+                      className="w-12 h-8 rounded border border-gray-300"
+                    />
+                    <input
+                      type="text"
+                      value={fillColor}
+                      onChange={(e) => setFillColor(e.target.value)}
+                      className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium text-gray-700 mb-2 block">
+                    Stroke Width
+                  </label>
+                  <Slider
+                    value={[strokeWidth]}
+                    onValueChange={(value) => setStrokeWidth(value[0])}
+                    min={1}
+                    max={20}
+                    step={1}
+                  />
+                  <span className="text-xs text-gray-500">{strokeWidth}px</span>
+                </div>
               </div>
             </div>
-            
-            <div>
-              <label className="text-sm font-medium text-gray-700 mb-2 block">
-                Fill Color
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="color"
-                  value={fillColor}
-                  onChange={(e) => setFillColor(e.target.value)}
-                  className="w-12 h-8 rounded border border-gray-300"
-                />
-                <input
-                  type="text"
-                  value={fillColor}
-                  onChange={(e) => setFillColor(e.target.value)}
-                  className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded"
-                />
-              </div>
-            </div>
-            
-            <div>
-              <label className="text-sm font-medium text-gray-700 mb-2 block">
-                Stroke Width
-              </label>
-              <Slider
-                value={[strokeWidth]}
-                onValueChange={(value) => setStrokeWidth(value[0])}
-                min={1}
-                max={20}
-                step={1}
-              />
-              <span className="text-xs text-gray-500">{strokeWidth}px</span>
-            </div>
-          </div>
-          
-          {/* AI Assistant Panel */}
-          <div className="mt-8 p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg">
-            <div className="flex items-center gap-2 mb-3">
-              <Brain className="w-5 h-5 text-purple-600" />
-              <h4 className="font-semibold text-purple-900">AI Assistant</h4>
-            </div>
-            <p className="text-sm text-purple-700 mb-3">
-              Get intelligent suggestions for your current project
-            </p>
-            <Button
-              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white text-sm"
-              onClick={handleAISuggestions}
-            >
-              <Sparkles className="w-4 h-4 mr-2" />
-              Get AI Suggestions
-            </Button>
+
+            {/* Advanced AI Features */}
+            <AIFeatures
+              onImageGenerated={(imageUrl, prompt) => {
+                // Add generated image to canvas
+                const imageElement: CanvasElement = {
+                  id: Date.now().toString(),
+                  type: 'image',
+                  x: 50,
+                  y: 50,
+                  width: 200,
+                  height: 200,
+                  properties: {
+                    imageUrl: imageUrl,
+                    text: prompt
+                  }
+                };
+                setElements(prev => [...prev, imageElement]);
+
+                // Save to history
+                const newHistory = [...history.slice(0, historyStep + 1), [...elements, imageElement]];
+                setHistory(newHistory);
+                setHistoryStep(newHistory.length - 1);
+              }}
+              onSuggestionApplied={(suggestion) => {
+                // TODO: Implement suggestion application logic here
+                // This could involve:
+                // - Analyzing current elements and applying color improvements
+                // - Adjusting layout and spacing
+                // - Modifying typography and styles
+                console.log('Applying suggestion:', suggestion);
+              }}
+              currentElements={elements}
+            />
           </div>
         </div>
       </div>
