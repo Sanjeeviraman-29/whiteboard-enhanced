@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { Home, Infinity } from "lucide-react";
 
 interface TopBarProps {
   projectName: string;
@@ -73,4 +75,4 @@ const TopBar: React.FC<TopBarProps> = ({ projectName, onProjectNameChange, onSav
   );
 };
 
-export default TopBar; 
+export default TopBar;
