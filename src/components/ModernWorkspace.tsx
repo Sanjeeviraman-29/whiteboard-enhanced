@@ -1390,6 +1390,64 @@ const ModernWorkspace: React.FC = () => {
                       </div>
                     </div>
                   )}
+
+                  {/* Floating AI Assistant Button for Mobile */}
+                  <div className="absolute bottom-4 right-4 md:hidden">
+                    <Button
+                      onClick={() => setIsAIPanelOpen(!isAIPanelOpen)}
+                      className="w-14 h-14 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg hover:shadow-xl transition-all hover:scale-105"
+                    >
+                      <Sparkles className="w-6 h-6" />
+                    </Button>
+                  </div>
+
+                  {/* Mobile AI Panel Overlay */}
+                  {isAIPanelOpen && (
+                    <div className="absolute inset-0 bg-black/50 md:hidden z-50 flex items-end">
+                      <div className="w-full bg-white rounded-t-3xl max-h-[80vh] overflow-hidden">
+                        <div className="p-4 border-b flex items-center justify-between">
+                          <h3 className="font-semibold text-lg">AI Assistant</h3>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setIsAIPanelOpen(false)}
+                          >
+                            ✕
+                          </Button>
+                        </div>
+                        <div className="p-4 overflow-y-auto max-h-[60vh]">
+                          <AIFeatures
+                            onImageGenerated={(imageUrl, prompt) => {
+                              const imageElement: CanvasElement = {
+                                id: Date.now().toString(),
+                                type: 'image',
+                                x: 50,
+                                y: 50,
+                                width: 200,
+                                height: 200,
+                                properties: {
+                                  imageUrl: imageUrl,
+                                  text: prompt
+                                }
+                              };
+                              setElements(prev => [...prev, imageElement]);
+
+                              const newHistory = [...history.slice(0, historyStep + 1), [...elements, imageElement]];
+                              setHistory(newHistory);
+                              setHistoryStep(newHistory.length - 1);
+
+                              setIsAIPanelOpen(false); // Close panel after adding image
+                            }}
+                            onSuggestionApplied={(suggestion) => {
+                              console.log('Applying suggestion:', suggestion);
+                              setIsAIPanelOpen(false); // Close panel after applying suggestion
+                            }}
+                            currentElements={elements}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </TabsContent>
