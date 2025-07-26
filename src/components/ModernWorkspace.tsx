@@ -159,71 +159,80 @@ const ModernWorkspace: React.FC = () => {
   // Backend API functions
   const saveProject = async (project: Project) => {
     try {
-      const response = await fetch('/api/projects', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(project)
-      });
-      if (response.ok) {
+      const result = await apiService.saveProject(project);
+      if (result.success) {
         console.log('Project saved successfully');
+        // Track usage for analytics
+        await apiService.trackUsage('project_saved', {
+          projectType: project.type,
+          elementCount: elements.length
+        });
       }
     } catch (error) {
       console.error('Failed to save project:', error);
-      // Fallback to local storage
-      localStorage.setItem(`project-${project.id}`, JSON.stringify(project));
     }
   };
 
   const loadProject = async (projectId: string) => {
     try {
-      const response = await fetch(`/api/projects/${projectId}`);
-      if (response.ok) {
-        const project = await response.json();
-        setCurrentProject(project);
+      const project = await apiService.loadProject(projectId);
+      setCurrentProject(project);
+      if (project.elements) {
+        setElements(project.elements);
       }
     } catch (error) {
       console.error('Failed to load project:', error);
-      // Fallback to local storage
-      const stored = localStorage.getItem(`project-${projectId}`);
-      if (stored) {
-        setCurrentProject(JSON.parse(stored));
-      }
     }
   };
 
   // AI integration functions
   const enhanceWithAI = async (elements: CanvasElement[]) => {
     try {
-      const response = await fetch('/api/ai/enhance', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ elements })
-      });
-      if (response.ok) {
-        const enhanced = await response.json();
-        return enhanced.elements;
+      const response = await apiService.enhanceWithAI(elements, activeMode);
+      if (response.success) {
+        // Show AI suggestions to user
+        if (response.suggestions) {
+          console.log('AI Suggestions:', response.suggestions);
+        }
+        return response.data.elements || elements;
       }
     } catch (error) {
       console.error('AI enhancement failed:', error);
-      return elements;
     }
+    return elements;
   };
 
   const generateAIContent = async (prompt: string, type: string) => {
     try {
-      const response = await fetch('/api/ai/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt, type })
-      });
-      if (response.ok) {
-        const result = await response.json();
-        return result.content;
+      const response = await apiService.generateAIContent(prompt, type);
+      if (response.success) {
+        await apiService.trackUsage('ai_content_generated', {
+          type,
+          prompt: prompt.substring(0, 50)
+        });
+        return response.data.content;
       }
     } catch (error) {
       console.error('AI generation failed:', error);
-      return null;
     }
+    return null;
+  };
+
+  const getAISuggestions = async () => {
+    try {
+      const context = {
+        mode: activeMode,
+        elements: elements.slice(0, 10), // Send limited context
+        projectType: currentProject.type
+      };
+      const response = await apiService.getAISuggestions(context);
+      if (response.success && response.data.suggestions) {
+        return response.data.suggestions;
+      }
+    } catch (error) {
+      console.error('Failed to get AI suggestions:', error);
+    }
+    return [];
   };
 
   // Canvas functions
