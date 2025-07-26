@@ -771,7 +771,7 @@ const AIFeatures: React.FC<AIFeaturesProps> = ({
               <ol className="list-decimal list-inside space-y-2 text-black">
                 <li>Get your OpenAI API key from <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-medium">platform.openai.com</a></li>
                 <li>Create a <code className="bg-gray-100 px-2 py-1 rounded text-sm">.env</code> file in your project root</li>
-                <li>Add: <code className="bg-gray-100 px-2 py-1 rounded text-sm">REACT_APP_OPENAI_API_KEY=your_api_key_here</code></li>
+                <li>Add: <code className="bg-gray-100 px-2 py-1 rounded text-sm">VITE_OPENAI_API_KEY=your_api_key_here</code></li>
                 <li>Restart your development server</li>
               </ol>
             </div>
