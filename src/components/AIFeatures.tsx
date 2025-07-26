@@ -211,16 +211,59 @@ const AIFeatures: React.FC<AIFeaturesProps> = ({
     setCurrentResponse('');
 
     try {
-      // TODO: Connect to OpenAI GPT-4 API here
-      // const response = await fetch('/api/get-design-suggestions', {
+      // TODO: Connect to AI Chat/Suggestions API
+      //
+      // Option 1: OpenAI GPT-4 API
+      // const response = await fetch('https://api.openai.com/v1/chat/completions', {
       //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ 
-      //     prompt: assistantPrompt,
-      //     context: currentElements,
-      //     mode: 'creative_design'
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     'Authorization': `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`
+      //   },
+      //   body: JSON.stringify({
+      //     model: "gpt-4",
+      //     messages: [
+      //       {
+      //         role: "system",
+      //         content: "You are a professional design assistant. Provide specific, actionable advice for improving digital designs, layouts, colors, and user experience."
+      //       },
+      //       {
+      //         role: "user",
+      //         content: `Design context: ${JSON.stringify(currentElements.slice(0, 5))}. Question: ${assistantPrompt}`
+      //       }
+      //     ],
+      //     max_tokens: 500,
+      //     temperature: 0.7
       //   })
       // });
+      //
+      // Option 2: Custom Backend API
+      // const response = await fetch('/api/design-suggestions', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({
+      //     prompt: assistantPrompt,
+      //     elements: currentElements,
+      //     canvas_size: { width: 800, height: 600 },
+      //     design_mode: 'creative'
+      //   })
+      // });
+      //
+      // Option 3: Google Gemini API
+      // const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.REACT_APP_GEMINI_API_KEY}`, {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({
+      //     contents: [{
+      //       parts: [{ text: `As a design expert, help improve this design: ${assistantPrompt}. Context: ${JSON.stringify(currentElements)}` }]
+      //     }]
+      //   })
+      // });
+      //
+      // For Desktop Apps (Tauri/Electron):
+      // - Store API keys securely in environment files
+      // - Use native HTTP clients for better security
+      // - Consider local AI models for offline functionality
 
       // Generate contextual suggestions
       const mockSuggestions = generateContextualSuggestions(assistantPrompt, currentElements);
