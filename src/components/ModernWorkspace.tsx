@@ -999,27 +999,99 @@ const ModernWorkspace: React.FC = () => {
     applyVideoFilters();
   }, [videoFilters]);
 
-  const downloadEditedVideo = () => {
+  const downloadEditedVideo = async () => {
     if (!videoSrc || !videoFile) {
       alert('No video to download. Please upload a video first.');
       return;
     }
 
+    const video = videoRef.current;
+    if (!video) {
+      alert('Video not ready. Please wait for video to load.');
+      return;
+    }
+
     try {
-      // For now, we'll provide a simple download of the original file
-      // In a full implementation, you'd process the video with filters
+      // Create a canvas to process video frames
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        throw new Error('Cannot create canvas context');
+      }
+
+      // Set canvas dimensions to match video
+      canvas.width = video.videoWidth || 640;
+      canvas.height = video.videoHeight || 480;
+
+      // Check if any filters are applied
+      const hasFilters = videoFilters.brightness !== 100 ||
+                        videoFilters.contrast !== 100 ||
+                        videoFilters.saturation !== 100 ||
+                        videoFilters.sepia !== 0;
+
+      if (!hasFilters) {
+        // No filters applied, download original
+        const link = document.createElement('a');
+        link.href = videoSrc;
+        link.download = `${videoFile.name}`;
+        link.click();
+        alert('✅ Original video downloaded (no filters were applied).');
+        return;
+      }
+
+      // For filtered video, we'll create a processed frame as a demo
+      // In a real implementation, this would process all frames
+      alert('🎬 Processing video with filters...');
+
+      // Capture current frame with filters applied
+      video.pause();
+
+      // Apply filters to canvas context
+      ctx.filter = `
+        brightness(${videoFilters.brightness}%)
+        contrast(${videoFilters.contrast}%)
+        saturate(${videoFilters.saturation}%)
+        sepia(${videoFilters.sepia}%)
+      `;
+
+      // Draw the current video frame
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      // Convert to image and download as a preview
+      canvas.toBlob((blob) => {
+        if (blob) {
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          const fileName = videoFile.name.replace(/\.[^/.]+$/, "");
+          link.download = `edited-frame-${fileName}.png`;
+          link.href = url;
+          link.click();
+          URL.revokeObjectURL(url);
+
+          alert('✅ Downloaded current frame with filters applied as PNG!\n\nNote: Full video processing with filters requires specialized video encoding. This preview shows how your filters look.');
+        }
+      }, 'image/png');
+
+      // Also offer to download the original video
+      setTimeout(() => {
+        const downloadOriginal = confirm('Would you also like to download the original video file?');
+        if (downloadOriginal) {
+          const link = document.createElement('a');
+          link.href = videoSrc;
+          link.download = `original-${videoFile.name}`;
+          link.click();
+        }
+      }, 1000);
+
+    } catch (error) {
+      console.error('Video processing failed:', error);
+
+      // Fallback: download original video
       const link = document.createElement('a');
       link.href = videoSrc;
-      link.download = `edited-${videoFile.name}`;
-      link.style.display = 'none';
-      document.body.appendChild(link);
+      link.download = `${videoFile.name}`;
       link.click();
-      document.body.removeChild(link);
-
-      alert(`Video downloading! Note: Filters are applied visually but not to the downloaded file. For full processing, professional video editing software would be needed.`);
-    } catch (error) {
-      console.error('Download failed:', error);
-      alert('Download failed. Please try again or save the video manually.');
+      alert('⚠️ Filter processing failed. Downloaded original video instead.');
     }
   };
 
