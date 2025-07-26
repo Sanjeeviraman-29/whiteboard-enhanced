@@ -1985,7 +1985,7 @@ const ModernWorkspace: React.FC = () => {
             </TabsContent>
 
             {/* UI/UX Design Workspace */}
-            <TabsContent value="design" className="flex-1 p-6">
+            <TabsContent value="design" className="flex-1 p-6 h-full">
               <div className="bg-white rounded-xl shadow-lg overflow-hidden h-full flex">
                 <div className="flex-1 bg-gray-50 flex items-center justify-center relative">
                   <div className="w-80 h-96 bg-white rounded-lg shadow-md border-2 border-dashed border-gray-300 flex items-center justify-center">
