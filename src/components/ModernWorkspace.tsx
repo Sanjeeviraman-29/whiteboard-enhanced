@@ -155,6 +155,21 @@ const ModernWorkspace: React.FC = () => {
 
   // Design components
   const [selectedComponent, setSelectedComponent] = useState<string>('');
+
+  // Storyboarding state
+  const [storyboardFrames, setStoryboardFrames] = useState<StoryboardFrame[]>([]);
+  const [currentFrameId, setCurrentFrameId] = useState<string>('');
+  const [flowConnections, setFlowConnections] = useState<FlowConnection[]>([]);
+  const [isStoryboardMode, setIsStoryboardMode] = useState(false);
+  const [annotationMode, setAnnotationMode] = useState<'note' | 'arrow' | 'highlight' | null>(null);
+
+  // AI Auto-complete state
+  const [isAIAutoComplete, setIsAIAutoComplete] = useState(false);
+  const [incompleteShapes, setIncompleteShapes] = useState<CanvasElement[]>([]);
+  const [aiSuggestions, setAiSuggestions] = useState<CanvasElement[]>([]);
+
+  // Text to Image state
+  const [textToImagePrompt, setTextToImagePrompt] = useState('');
   
   const tools = {
     canvas: [
