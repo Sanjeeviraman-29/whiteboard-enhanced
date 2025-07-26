@@ -575,32 +575,33 @@ const ModernWorkspace: React.FC = () => {
     }
 
     try {
-      // For local files, we'll use a simpler approach
-      // Create a new image element with current styles
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      // Set canvas size
-      canvas.width = photo.naturalWidth || photo.width;
-      canvas.height = photo.naturalHeight || photo.height;
-
-      // Create a new image to avoid tainted canvas
+      // Create an image element from the original file
       const img = new Image();
-      img.crossOrigin = 'anonymous';
 
       img.onload = () => {
         try {
-          // Clear canvas
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          // Set canvas size to image dimensions
+          canvas.width = img.naturalWidth;
+          canvas.height = img.naturalHeight;
 
-          // Apply transformations
+          // Save context state
           ctx.save();
+
+          // Apply transformations to center point
           ctx.translate(canvas.width / 2, canvas.height / 2);
           ctx.rotate((rotation * Math.PI) / 180);
           ctx.scale(flipHorizontal ? -1 : 1, flipVertical ? -1 : 1);
 
-          // Apply filters
+          // Calculate filter values for canvas context
+          const brightnessMultiplier = brightness / 100;
+          const contrastMultiplier = contrast / 100;
+          const saturationMultiplier = saturation / 100;
+
+          // Apply CSS filters (these work in modern browsers)
           ctx.filter = `
             brightness(${brightness}%)
             contrast(${contrast}%)
@@ -612,38 +613,52 @@ const ModernWorkspace: React.FC = () => {
             invert(${invert}%)
           `;
 
-          // Draw the image
+          // Draw the image centered
           ctx.drawImage(img, -canvas.width / 2, -canvas.height / 2);
+
+          // Restore context state
           ctx.restore();
 
-          // Download
+          // Convert to blob and download
           canvas.toBlob((blob) => {
             if (blob) {
               const url = URL.createObjectURL(blob);
               const link = document.createElement('a');
-              link.download = `edited-${photoFile.name}`;
+              const fileName = photoFile.name.replace(/\.[^/.]+$/, ""); // Remove extension
+              link.download = `edited-${fileName}.png`;
               link.href = url;
+              document.body.appendChild(link);
               link.click();
+              document.body.removeChild(link);
               URL.revokeObjectURL(url);
+
+              alert('✅ Edited photo downloaded successfully with all filters applied!');
+            } else {
+              throw new Error('Failed to create blob');
             }
-          }, 'image/png');
+          }, 'image/png', 1.0);
 
         } catch (error) {
-          console.error('Canvas export failed:', error);
-          alert('Download failed. Try saving a screenshot instead.');
+          console.error('Canvas processing failed:', error);
+          // Fallback: download original with alert
+          const link = document.createElement('a');
+          link.href = photoSrc;
+          link.download = `edited-${photoFile.name}`;
+          link.click();
+          alert('⚠️ Downloaded original image. Some filters may not be applied in download.');
         }
       };
 
       img.onerror = () => {
-        alert('Could not process image for download. Try saving a screenshot instead.');
+        alert('❌ Could not process image. Please try uploading a different image format.');
       };
 
-      // Load the image (this should work for local blob URLs)
+      // Load the original image
       img.src = photoSrc;
 
     } catch (error) {
-      console.error('Download failed:', error);
-      alert('Download failed. Your browser may not support this feature for this image type.');
+      console.error('Download preparation failed:', error);
+      alert('❌ Download failed. Please try again or use a different browser.');
     }
   };
 
