@@ -103,10 +103,19 @@ const ModernWorkspace: React.FC = () => {
   // Video editing state
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoSrc, setVideoSrc] = useState<string>('');
+  const [videoFile, setVideoFile] = useState<File | null>(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(100);
+  const [playbackSpeed, setPlaybackSpeed] = useState(1);
+  const [videoTrim, setVideoTrim] = useState({ start: 0, end: 0 });
+  const [videoFilters, setVideoFilters] = useState({
+    brightness: 100,
+    contrast: 100,
+    saturation: 100,
+    sepia: 0
+  });
 
   // Photo editing state
   const photoRef = useRef<HTMLImageElement>(null);
