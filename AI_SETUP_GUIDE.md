@@ -72,7 +72,7 @@ To unlock the complete AI-powered capabilities of your digital creator whiteboar
 
 #### Still Seeing Demo Mode?
 - Check browser console for any error messages
-- Ensure environment variable name is exactly: `REACT_APP_OPENAI_API_KEY`
+- Ensure environment variable name is exactly: `VITE_OPENAI_API_KEY`
 - Try clearing browser cache and refreshing
 
 ### 🏢 Production Deployment
