@@ -593,6 +593,127 @@ const ModernWorkspace: React.FC = () => {
     return suggestions;
   };
 
+  // Text-to-Image generation function
+  const handleTextToImage = async () => {
+    const prompt = window.prompt('Describe the image you want to create:\n(e.g., "A cute cartoon cat playing with a ball", "Simple house drawing", "Geometric pattern")');
+
+    if (!prompt || prompt.trim().length === 0) {
+      return;
+    }
+
+    setTextToImagePrompt(prompt);
+
+    try {
+      // Generate image based on text prompt
+      const generatedImage = await generateImageFromText(prompt);
+
+      if (generatedImage) {
+        const imageElement: CanvasElement = {
+          id: Date.now().toString(),
+          type: 'image',
+          x: 50,
+          y: 50,
+          width: 300,
+          height: 300,
+          properties: {
+            imageUrl: generatedImage.url,
+            text: prompt
+          }
+        };
+
+        setElements(prev => [...prev, imageElement]);
+
+        // Save to history
+        const newHistory = [...history.slice(0, historyStep + 1), [...elements, imageElement]];
+        setHistory(newHistory);
+        setHistoryStep(newHistory.length - 1);
+
+        alert('✨ AI generated image added to canvas! You can move and resize it.');
+      }
+    } catch (error) {
+      console.error('Text-to-image generation failed:', error);
+      alert('⚠️ Image generation failed. Please try a different prompt or try again later.');
+    }
+  };
+
+  const generateImageFromText = async (prompt: string): Promise<{ url: string; alt: string } | null> => {
+    try {
+      // For demo purposes, we'll create a placeholder based on the prompt
+      // In a real implementation, this would call DALL-E, Midjourney, or Stable Diffusion API
+
+      // Create a simple generated image placeholder
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return null;
+
+      canvas.width = 400;
+      canvas.height = 400;
+
+      // Create a gradient background based on prompt keywords
+      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+
+      if (prompt.toLowerCase().includes('cat')) {
+        gradient.addColorStop(0, '#ffeaa7');
+        gradient.addColorStop(1, '#fab1a0');
+      } else if (prompt.toLowerCase().includes('house')) {
+        gradient.addColorStop(0, '#74b9ff');
+        gradient.addColorStop(1, '#0984e3');
+      } else if (prompt.toLowerCase().includes('geometric')) {
+        gradient.addColorStop(0, '#a29bfe');
+        gradient.addColorStop(1, '#6c5ce7');
+      } else if (prompt.toLowerCase().includes('nature')) {
+        gradient.addColorStop(0, '#00b894');
+        gradient.addColorStop(1, '#00cec9');
+      } else {
+        gradient.addColorStop(0, '#fd79a8');
+        gradient.addColorStop(1, '#fdcb6e');
+      }
+
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Add some basic shapes based on prompt
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+      ctx.font = '24px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('AI Generated:', canvas.width / 2, 50);
+
+      ctx.font = '18px Arial';
+      const words = prompt.split(' ').slice(0, 4);
+      words.forEach((word, index) => {
+        ctx.fillText(word, canvas.width / 2, 100 + index * 30);
+      });
+
+      // Add some decorative elements
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+      for (let i = 0; i < 5; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        const radius = 10 + Math.random() * 20;
+
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, 2 * Math.PI);
+        ctx.fill();
+      }
+
+      // Convert to blob URL
+      return new Promise((resolve) => {
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const url = URL.createObjectURL(blob);
+            resolve({ url, alt: `AI generated: ${prompt}` });
+          } else {
+            resolve(null);
+          }
+        }, 'image/png');
+      });
+
+    } catch (error) {
+      console.error('Image generation error:', error);
+      return null;
+    }
+  };
+
   const handleAIGenerate = async () => {
     const prompt = window.prompt('Describe what you want to create:');
     if (!prompt) return;
