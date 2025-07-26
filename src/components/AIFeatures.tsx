@@ -8,10 +8,10 @@
  * INTEGRATION GUIDE:
  *
  * Environment Variables Required:
- * - REACT_APP_OPENAI_API_KEY (for DALL-E and GPT-4)
- * - REACT_APP_STABILITY_API_KEY (for Stability AI)
- * - REACT_APP_REPLICATE_API_TOKEN (for Replicate)
- * - REACT_APP_GEMINI_API_KEY (for Google Gemini)
+ * - VITE_OPENAI_API_KEY (for DALL-E and GPT-4)
+ * - VITE_STABILITY_API_KEY (for Stability AI)
+ * - VITE_REPLICATE_API_TOKEN (for Replicate)
+ * - VITE_GEMINI_API_KEY (for Google Gemini)
  *
  * Backend Integration Options:
  * 1. Direct API calls (requires CORS handling)
