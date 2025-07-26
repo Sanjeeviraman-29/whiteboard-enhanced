@@ -432,7 +432,7 @@ const ModernWorkspace: React.FC = () => {
   const togglePlayPause = () => {
     const video = videoRef.current;
     if (!video) return;
-    
+
     if (isPlaying) {
       video.pause();
     } else {
@@ -440,6 +440,39 @@ const ModernWorkspace: React.FC = () => {
     }
     setIsPlaying(!isPlaying);
   };
+
+  const changePlaybackSpeed = (speed: number) => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.playbackRate = speed;
+    setPlaybackSpeed(speed);
+  };
+
+  const seekToTime = (time: number) => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.currentTime = time;
+    setCurrentTime(time);
+  };
+
+  const applyVideoFilters = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.style.filter = `
+      brightness(${videoFilters.brightness}%)
+      contrast(${videoFilters.contrast}%)
+      saturate(${videoFilters.saturation}%)
+      sepia(${videoFilters.sepia}%)
+    `;
+  };
+
+  // Apply video filters whenever they change
+  useEffect(() => {
+    applyVideoFilters();
+  }, [videoFilters]);
 
   // Photo functions
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
