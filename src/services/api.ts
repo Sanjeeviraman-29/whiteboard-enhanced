@@ -317,10 +317,8 @@ class APIService {
   }
 
   async processImage(imageUrl: string, filters: Record<string, any>): Promise<{ processedUrl: string }> {
-    return await this.request<{ processedUrl: string }>('/api/media/process-image', {
-      method: 'POST',
-      body: JSON.stringify({ imageUrl, filters }),
-    });
+    // Return the same URL - no processing, all effects are applied via CSS
+    return Promise.resolve({ processedUrl: imageUrl });
   }
 
   async processVideo(videoUrl: string, edits: Record<string, any>): Promise<{ processedUrl: string; preview: string }> {
