@@ -372,11 +372,21 @@ const ModernWorkspace: React.FC = () => {
   };
 
   // Video functions
-  const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const url = URL.createObjectURL(file);
-      setVideoSrc(url);
+      try {
+        const result = await apiService.uploadMedia(file, 'video');
+        setVideoSrc(result.url);
+        await apiService.trackUsage('video_uploaded', {
+          size: file.size,
+          duration: result.metadata?.duration
+        });
+      } catch (error) {
+        // Fallback to local URL
+        const url = URL.createObjectURL(file);
+        setVideoSrc(url);
+      }
     }
   };
 
