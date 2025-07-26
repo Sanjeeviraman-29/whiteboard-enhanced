@@ -114,7 +114,7 @@ const AIFeatures: React.FC<AIFeaturesProps> = ({
     
     try {
       // Real OpenAI DALL-E API Integration - ONLINE MODE
-      const OPENAI_API_KEY = process.env.REACT_APP_OPENAI_API_KEY;
+      const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
       
       if (OPENAI_API_KEY) {
         // Use real OpenAI API for online image generation
@@ -442,7 +442,7 @@ const AIFeatures: React.FC<AIFeaturesProps> = ({
           ) : (
             <>
               <Wifi className="w-5 h-5 text-orange-600" />
-              <span className="font-semibold text-orange-800">📱 Demo Mode - Add API Key for Full Features</span>
+              <span className="font-semibold text-orange-800">��� Demo Mode - Add API Key for Full Features</span>
               <Badge className="bg-orange-100 text-orange-800">Local Simulation</Badge>
             </>
           )}
