@@ -180,8 +180,6 @@ const ModernWorkspace: React.FC = () => {
       { id: 'circle', icon: Circle, label: 'Circle' },
       { id: 'line', icon: PenTool, label: 'Line' },
       { id: 'move', icon: Move, label: 'Move' },
-      { id: 'annotation', icon: Type, label: 'Annotate' },
-      { id: 'flow', icon: Zap, label: 'Flow' },
       { id: 'ai-enhance', icon: Sparkles, label: 'AI Enhance' },
       { id: 'ai-complete', icon: Brain, label: 'AI Complete' },
       { id: 'text-to-image', icon: ImageIcon, label: 'Text→Image' },
