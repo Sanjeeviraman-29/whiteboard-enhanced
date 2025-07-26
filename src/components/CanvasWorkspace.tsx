@@ -166,16 +166,10 @@ const CanvasWorkspace = forwardRef<HTMLCanvasElement, CanvasWorkspaceProps>(
 
     // Function to push canvas snapshot to undo stack
     const pushCanvasSnapshot = () => {
-      const snapshot = captureCanvasSnapshot();
-      if (snapshot) {
-        setUndoStack(prev => {
-          // Limit undo stack to 50 entries
-          const newStack = [...prev, snapshot];
-          return newStack.slice(Math.max(0, newStack.length - 50));
-        });
-        // Clear redo stack when a new action is performed
-        setRedoStack([]);
-      }
+      // Add current state to history
+      setHistory(prev => [...prev, { shapes, textObjects }]);
+      // Clear redo stack when a new action is performed
+      setRedoStack([]);
     };
 
     // Comprehensive canvas setup with precise sizing
@@ -598,13 +592,17 @@ const CanvasWorkspace = forwardRef<HTMLCanvasElement, CanvasWorkspaceProps>(
         
         if (textObj && textObj.text.trim()) {
           try {
+            const canvas = canvasRef.current;
+            const ctx = canvas?.getContext("2d");
+            const textWidth = ctx ? ctx.measureText(textObj.text).width : 100;
+
             // Generate image based on text
             const imageUrl = await generateAIImageFromShapes([...shapes, {
               id: Date.now().toString(),
               type: "text",
               x: textObj.x,
               y: textObj.y + textObj.fontSize + 10, // Place below text
-              w: ctx.measureText(textObj.text).width, // Use actual text width
+              w: textWidth, // Use actual text width
               h: textObj.fontSize,
               color: textObj.color,
               stroke: 0,
