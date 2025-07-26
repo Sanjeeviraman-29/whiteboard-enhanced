@@ -348,8 +348,8 @@ class APIService {
         body: JSON.stringify({ action, metadata, timestamp: new Date().toISOString() }),
       });
     } catch (error) {
-      // Silently fail for analytics
-      console.debug('Analytics tracking failed:', error);
+      // Silently fail for analytics - don't throw errors
+      console.debug('Analytics tracking failed (expected in dev mode):', action);
     }
   }
 }
