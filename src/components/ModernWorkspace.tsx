@@ -1167,14 +1167,18 @@ const ModernWorkspace: React.FC = () => {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar Tools */}
-        <div className="w-20 bg-white/90 backdrop-blur-md border-r border-gray-200 flex flex-col items-center py-4 gap-2">
+        <div className="w-20 bg-white/95 backdrop-blur-md border-r border-gray-300 flex flex-col items-center py-4 gap-2 shadow-md">
           {tools[activeMode].map((tool) => (
             <Button
               key={tool.id}
               variant={selectedTool === tool.id ? "default" : "ghost"}
               size="sm"
-              className={`w-12 h-12 flex flex-col items-center gap-1 text-xs ${
-                tool.id.includes('ai-') ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600' : ''
+              className={`w-12 h-12 flex flex-col items-center gap-1 text-xs font-medium transition-all hover:scale-105 ${
+                tool.id.includes('ai-')
+                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700 shadow-lg'
+                  : selectedTool === tool.id
+                    ? 'bg-black text-white shadow-lg'
+                    : 'text-black hover:bg-gray-100 hover:text-black border border-gray-300'
               }`}
               onClick={() => {
                 if (tool.id === 'ai-enhance') {
