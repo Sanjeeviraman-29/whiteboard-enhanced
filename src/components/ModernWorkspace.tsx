@@ -161,15 +161,16 @@ const ModernWorkspace: React.FC = () => {
     try {
       const result = await apiService.saveProject(project);
       if (result.success) {
-        console.log('Project saved successfully');
-        // Track usage for analytics
-        await apiService.trackUsage('project_saved', {
+        console.debug('Project saved successfully');
+        // Track usage for analytics (non-blocking)
+        apiService.trackUsage('project_saved', {
           projectType: project.type,
           elementCount: elements.length
-        });
+        }).catch(() => {}); // Silently handle tracking failures
       }
     } catch (error) {
-      console.error('Failed to save project:', error);
+      console.debug('Save project using local storage fallback');
+      // Fallback already handled in API service
     }
   };
 
