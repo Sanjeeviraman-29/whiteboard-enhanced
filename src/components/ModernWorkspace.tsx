@@ -920,7 +920,10 @@ const ModernWorkspace: React.FC = () => {
             <p className="text-sm text-purple-700 mb-3">
               Get intelligent suggestions for your current project
             </p>
-            <Button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white text-sm">
+            <Button
+              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white text-sm"
+              onClick={handleAISuggestions}
+            >
               <Sparkles className="w-4 h-4 mr-2" />
               Get AI Suggestions
             </Button>
