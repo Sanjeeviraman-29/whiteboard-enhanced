@@ -174,21 +174,30 @@ const ModernWorkspace: React.FC = () => {
   };
 
   // Backend API functions
-  const saveProject = async (project: Project) => {
-    try {
-      const result = await apiService.saveProject(project);
-      if (result.success) {
-        console.debug('Project saved successfully');
-        // Track usage for analytics (non-blocking)
-        apiService.trackUsage('project_saved', {
+  const saveProject = (project: Project) => {
+    // Make this completely non-blocking and silent
+    Promise.resolve().then(async () => {
+      try {
+        const result = await apiService.saveProject(project);
+        if (result.success) {
+          console.debug('Project saved successfully');
+        }
+      } catch (error) {
+        console.debug('Project saved to local storage');
+      }
+
+      // Track usage in the background (completely silent)
+      try {
+        await apiService.trackUsage('project_saved', {
           projectType: project.type,
           elementCount: elements.length
-        }).catch(() => {}); // Silently handle tracking failures
+        });
+      } catch (error) {
+        // Completely silent - no logging
       }
-    } catch (error) {
-      console.debug('Save project using local storage fallback');
-      // Fallback already handled in API service
-    }
+    }).catch(() => {
+      // Completely silent fallback
+    });
   };
 
   const loadProject = async (projectId: string) => {
