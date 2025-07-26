@@ -1002,7 +1002,11 @@ const ModernWorkspace: React.FC = () => {
                         >
                           Reset Filters
                         </Button>
-                        <Button variant="outline" size="sm">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={downloadEditedVideo}
+                        >
                           <Download className="w-4 h-4 mr-2" />
                           Export Video
                         </Button>
