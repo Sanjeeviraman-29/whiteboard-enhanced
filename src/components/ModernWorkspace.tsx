@@ -653,7 +653,11 @@ const ModernWorkspace: React.FC = () => {
             <Button variant="outline" size="sm" onClick={redo} disabled={historyStep >= history.length - 1}>
               <Redo className="w-4 h-4" />
             </Button>
-            <Button variant="outline" size="sm" onClick={() => saveProject(currentProject)}>
+            <Button variant="outline" size="sm" onClick={() => {
+              const projectToSave = { ...currentProject, elements, lastModified: new Date() };
+              localStorage.setItem(`project-${projectToSave.id}`, JSON.stringify(projectToSave));
+              alert('Project saved locally!');
+            }}>
               <Save className="w-4 h-4 mr-2" />
               Save
             </Button>
