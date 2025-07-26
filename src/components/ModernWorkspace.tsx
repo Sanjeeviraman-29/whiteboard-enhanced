@@ -774,13 +774,26 @@ const ModernWorkspace: React.FC = () => {
                           onChange={handleVideoUpload}
                           className="hidden"
                           id="video-upload-new"
+                          ref={(input) => {
+                            if (input) {
+                              (window as any).videoUploadNewRef = input;
+                            }
+                          }}
                         />
-                        <label htmlFor="video-upload-new">
-                          <Button variant="outline" size="sm" className="bg-white/90 hover:bg-white">
-                            <Upload className="w-4 h-4 mr-2" />
-                            Upload New
-                          </Button>
-                        </label>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="bg-white/90 hover:bg-white"
+                          onClick={() => {
+                            const input = document.getElementById('video-upload-new') as HTMLInputElement;
+                            if (input) {
+                              input.click();
+                            }
+                          }}
+                        >
+                          <Upload className="w-4 h-4 mr-2" />
+                          Upload New
+                        </Button>
                       </div>
                     </>
                   ) : (
