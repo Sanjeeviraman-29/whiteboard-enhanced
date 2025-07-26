@@ -166,6 +166,9 @@ const ModernWorkspace: React.FC = () => {
 
   // Text to Image state
   const [textToImagePrompt, setTextToImagePrompt] = useState('');
+
+  // Mobile AI panel state
+  const [isAIPanelOpen, setIsAIPanelOpen] = useState(false);
   
   const tools = {
     canvas: [
