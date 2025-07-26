@@ -406,29 +406,30 @@ const ModernWorkspace: React.FC = () => {
   };
 
   // Video functions
-  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       // Store file reference
       setVideoFile(file);
 
-      try {
-        const result = await apiService.uploadMedia(file, 'video');
-        setVideoSrc(result.url);
-        console.log('Video uploaded successfully:', file.name);
+      // Always use local URL immediately for best user experience
+      const url = URL.createObjectURL(file);
+      setVideoSrc(url);
+      console.log('Video loaded:', file.name);
 
-        // Track usage (non-blocking)
-        apiService.trackUsage('video_uploaded', {
-          size: file.size,
-          type: file.type,
-          name: file.name
-        }).catch(() => {});
-      } catch (error) {
-        console.debug('Using local video URL for:', file.name);
-        // Always use local URL for device files
-        const url = URL.createObjectURL(file);
-        setVideoSrc(url);
-      }
+      // Background processing (completely non-blocking)
+      Promise.resolve().then(async () => {
+        try {
+          await apiService.uploadMedia(file, 'video');
+          await apiService.trackUsage('video_uploaded', {
+            size: file.size,
+            type: file.type,
+            name: file.name
+          });
+        } catch (error) {
+          // Silent background processing
+        }
+      }).catch(() => {});
 
       // Reset filters and trim when new video is uploaded
       setVideoFilters({ brightness: 100, contrast: 100, saturation: 100, sepia: 0 });
