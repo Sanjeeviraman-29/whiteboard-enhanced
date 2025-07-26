@@ -57,6 +57,10 @@ const TopBar: React.FC<TopBarProps> = ({ projectName, onProjectNameChange, onSav
         )}
       </div>
       <div className="flex items-center gap-3">
+        <Link to="/" className="bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-lg transition flex items-center gap-2" title="Back to Home">
+          <Home className="w-4 h-4" />
+          <span className="hidden sm:inline">Home</span>
+        </Link>
         <button
           className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition"
           onClick={onSaveImage}
