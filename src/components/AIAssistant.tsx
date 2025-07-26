@@ -35,47 +35,112 @@ const AIAssistant: React.FC = () => {
 
   const getAIResponse = (userMessage: string): string => {
     const lowerMessage = userMessage.toLowerCase();
-    
+
+    // Color and palette suggestions
     if (lowerMessage.includes("color") || lowerMessage.includes("palette")) {
-      return "For color schemes, I recommend starting with a primary color and building a palette around it. Popular combinations include:\n\n• **Modern**: Deep blues (#1e40af) with light grays (#f8fafc)\n• **Warm**: Coral (#ff6b6b) with cream (#fef7ed)\n• **Professional**: Navy (#1e293b) with gold accents (#f59e0b)\n\nWould you like me to suggest specific colors for your design?";
+      return "For color schemes, I recommend starting with a primary color and building a palette around it. Popular combinations include:\n\n• **Modern**: Deep blues (#1e40af) with light grays (#f8fafc)\n• **Warm**: Coral (#ff6b6b) with cream (#fef7ed)\n• **Professional**: Navy (#1e293b) with gold accents (#f59e0b)\n• **Nature**: Forest green (#059669) with warm beige (#fef3c7)\n• **Vibrant**: Purple (#8b5cf6) with cyan (#06b6d4)\n\nWould you like me to suggest specific colors for your design?";
     }
-    
+
+    // Layout and grid systems
     if (lowerMessage.includes("layout") || lowerMessage.includes("grid")) {
-      return "Great choice! Here are some popular layout patterns:\n\n• **Card Grid**: Perfect for showcasing content or products\n• **Hero + Sections**: Classic landing page structure\n• **Sidebar Layout**: Great for dashboards or admin panels\n• **Masonry Grid**: Dynamic, Pinterest-style layouts\n\nWhat type of content will you be displaying?";
+      return "Great choice! Here are some popular layout patterns:\n\n• **Card Grid**: Perfect for showcasing content or products\n• **Hero + Sections**: Classic landing page structure\n• **Sidebar Layout**: Great for dashboards or admin panels\n• **Masonry Grid**: Dynamic, Pinterest-style layouts\n• **Flexbox Layout**: Flexible and responsive arrangements\n• **CSS Grid**: Complex, two-dimensional layouts\n\nWhat type of content will you be displaying?";
     }
-    
+
+    // Typography and fonts
     if (lowerMessage.includes("font") || lowerMessage.includes("typography")) {
-      return "Typography is crucial for great design! Here are my recommendations:\n\n• **Headers**: Inter, Poppins, or Montserrat for modern look\n• **Body Text**: System fonts or Open Sans for readability\n• **Code/Monospace**: JetBrains Mono or Fira Code\n\nFor hierarchy, use size, weight, and spacing. Want specific font pairings?";
+      return "Typography is crucial for great design! Here are my recommendations:\n\n• **Headers**: Inter, Poppins, or Montserrat for modern look\n• **Body Text**: System fonts or Open Sans for readability\n• **Code/Monospace**: JetBrains Mono or Fira Code\n• **Serif**: Playfair Display or Merriweather for elegance\n• **Script**: Dancing Script for decorative elements\n\nFor hierarchy, use size, weight, and spacing. Want specific font pairings?";
     }
-    
+
+    // UI Components
     if (lowerMessage.includes("button") || lowerMessage.includes("component")) {
-      return "I can help you design beautiful components! For buttons, consider:\n\n• **Primary**: Bold colors with subtle shadows\n• **Secondary**: Outlined or ghost styles\n• **States**: Hover, active, and disabled variations\n\nShall I suggest specific button styles for your design system?";
+      return "I can help you design beautiful components! For buttons, consider:\n\n• **Primary**: Bold colors with subtle shadows\n• **Secondary**: Outlined or ghost styles\n• **States**: Hover, active, and disabled variations\n• **Sizes**: Small, medium, large variants\n• **Icons**: Add visual clarity and context\n\nShall I suggest specific button styles for your design system?";
     }
-    
+
+    // Dashboard design
     if (lowerMessage.includes("dashboard") || lowerMessage.includes("admin")) {
-      return "Dashboards need clear information hierarchy! Key elements:\n\n• **Navigation**: Fixed sidebar or top bar\n• **Cards**: Group related metrics and data\n• **Charts**: Use consistent colors and clear labels\n• **Actions**: Primary actions should be prominent\n\nWhat data will your dashboard display?";
+      return "Dashboards need clear information hierarchy! Key elements:\n\n• **Navigation**: Fixed sidebar or top bar\n• **Cards**: Group related metrics and data\n• **Charts**: Use consistent colors and clear labels\n• **Actions**: Primary actions should be prominent\n• **Filters**: Easy data manipulation tools\n• **Status**: Clear indicators for system health\n\nWhat data will your dashboard display?";
     }
-    
+
+    // Mobile and responsive design
     if (lowerMessage.includes("mobile") || lowerMessage.includes("responsive")) {
-      return "Mobile-first design is essential! Key principles:\n\n• **Touch Targets**: Minimum 44px for buttons\n• **Navigation**: Hamburger menu or bottom tabs\n• **Content**: Stack vertically, reduce complexity\n• **Performance**: Optimize images and fonts\n\nNeed help with specific responsive breakpoints?";
+      return "Mobile-first design is essential! Key principles:\n\n• **Touch Targets**: Minimum 44px for buttons\n• **Navigation**: Hamburger menu or bottom tabs\n• **Content**: Stack vertically, reduce complexity\n• **Performance**: Optimize images and fonts\n• **Gestures**: Swipe, pinch, and tap interactions\n• **Safe Areas**: Account for notches and home indicators\n\nNeed help with specific responsive breakpoints?";
     }
-    
+
+    // Animation and transitions
     if (lowerMessage.includes("animation") || lowerMessage.includes("transition")) {
-      return "Smooth animations enhance user experience! Best practices:\n\n• **Duration**: 200-300ms for micro-interactions\n• **Easing**: Use cubic-bezier for natural feel\n• **Purpose**: Guide attention, provide feedback\n• **Performance**: Use transform and opacity\n\nWhat elements would you like to animate?";
+      return "Smooth animations enhance user experience! Best practices:\n\n• **Duration**: 200-300ms for micro-interactions\n• **Easing**: Use cubic-bezier for natural feel\n• **Purpose**: Guide attention, provide feedback\n• **Performance**: Use transform and opacity\n• **Loading**: Skeleton screens and progressive loading\n• **Accessibility**: Respect reduced motion preferences\n\nWhat elements would you like to animate?";
     }
-    
+
+    // Logo and branding
+    if (lowerMessage.includes("logo") || lowerMessage.includes("brand")) {
+      return "Logo design is all about memorable simplicity! Consider:\n\n• **Simplicity**: Clean, recognizable at any size\n• **Relevance**: Reflects your brand personality\n• **Versatility**: Works in color and black/white\n• **Timelessness**: Avoid trendy elements\n• **Scalability**: Readable from business card to billboard\n\nWhat industry or style are you targeting?";
+    }
+
+    // Website design
+    if (lowerMessage.includes("website") || lowerMessage.includes("web")) {
+      return "Website design involves many considerations:\n\n• **User Journey**: Map out user goals and paths\n• **Content Strategy**: Organize information logically\n• **Visual Hierarchy**: Guide users through your content\n• **Performance**: Fast loading and smooth interactions\n• **SEO**: Structure for search engine visibility\n• **Accessibility**: Design for all users\n\nWhat's the main purpose of your website?";
+    }
+
+    // App design
+    if (lowerMessage.includes("app") || lowerMessage.includes("mobile app")) {
+      return "App design focuses on user experience:\n\n• **Onboarding**: Smooth introduction to your app\n• **Navigation**: Intuitive and consistent patterns\n• **Gestures**: Natural touch interactions\n• **Feedback**: Visual and haptic responses\n• **Offline**: Graceful handling of no connection\n• **Platform**: Follow iOS/Android guidelines\n\nWhat type of app are you building?";
+    }
+
+    // UX/UI principles
+    if (lowerMessage.includes("ux") || lowerMessage.includes("ui") || lowerMessage.includes("user experience")) {
+      return "UX/UI design principles for great experiences:\n\n• **Clarity**: Make functions obvious\n• **Consistency**: Use familiar patterns\n• **Feedback**: Show system status clearly\n• **Efficiency**: Minimize user effort\n• **Forgiveness**: Easy error recovery\n• **Accessibility**: Inclusive design for all\n\nWhat specific UX challenge are you facing?";
+    }
+
+    // Video editing ideas
+    if (lowerMessage.includes("video") || lowerMessage.includes("editing")) {
+      return "Video editing tips for engaging content:\n\n• **Pacing**: Vary cuts to match content mood\n• **Transitions**: Use purposefully, not excessively\n• **Color Grading**: Maintain consistent mood\n• **Audio**: Balance music, effects, and dialogue\n• **Text Overlays**: Keep readable and brief\n• **Thumbnails**: Design eye-catching previews\n\nWhat type of video are you creating?";
+    }
+
+    // Photo editing ideas
+    if (lowerMessage.includes("photo") || lowerMessage.includes("photography")) {
+      return "Photo editing for stunning visuals:\n\n• **Exposure**: Balance highlights and shadows\n• **Contrast**: Add depth and dimension\n• **Saturation**: Enhance without oversaturation\n• **Composition**: Rule of thirds, leading lines\n• **Filters**: Apply subtly for mood\n• **Sharpening**: Enhance key details\n\nWhat style are you going for?";
+    }
+
+    // Creative ideas and inspiration
+    if (lowerMessage.includes("idea") || lowerMessage.includes("inspiration") || lowerMessage.includes("creative")) {
+      return "Here are some creative ideas to spark inspiration:\n\n• **Mood Boards**: Collect visual references\n• **Color Stories**: Build palettes from nature\n• **Typography Mixing**: Combine serif and sans-serif\n• **Asymmetric Layouts**: Break traditional grids\n• **Micro-Interactions**: Delight in small details\n• **Bold Gradients**: Create dynamic backgrounds\n\nWhat project are you working on?";
+    }
+
+    // Landing page design
+    if (lowerMessage.includes("landing") || lowerMessage.includes("homepage")) {
+      return "Landing pages need immediate impact:\n\n• **Hero Section**: Clear value proposition\n• **Benefits**: Focus on user outcomes\n• **Social Proof**: Testimonials and reviews\n• **Call-to-Action**: Prominent and specific\n• **Loading Speed**: Optimize for fast delivery\n• **Mobile-First**: Most traffic is mobile\n\nWhat's your main conversion goal?";
+    }
+
+    // E-commerce design
+    if (lowerMessage.includes("ecommerce") || lowerMessage.includes("shop") || lowerMessage.includes("store")) {
+      return "E-commerce design for better conversions:\n\n• **Product Images**: High-quality, multiple angles\n• **Search & Filters**: Easy product discovery\n• **Trust Signals**: Security badges, reviews\n• **Checkout**: Minimal steps, guest options\n• **Cart**: Clear pricing, easy modification\n• **Returns**: Clear, confident policies\n\nWhat products will you be selling?";
+    }
+
+    // Thank you responses
     if (lowerMessage.includes("thank") || lowerMessage.includes("thanks")) {
       return "You're very welcome! I'm here to help you create amazing designs. Feel free to ask about colors, layouts, components, or any design challenges you're facing. Happy designing! 🎨";
     }
-    
+
+    // Greeting responses
+    if (lowerMessage.includes("hello") || lowerMessage.includes("hi") || lowerMessage.includes("hey")) {
+      return "Hello! I'm excited to help you with your design project. I can assist with:\n\n• Color schemes and palettes\n• Layout and composition ideas\n• Typography recommendations\n• UI/UX best practices\n• Photo and video editing tips\n• Creative inspiration\n\nWhat would you like to work on today?";
+    }
+
+    // Help responses
+    if (lowerMessage.includes("help") || lowerMessage.includes("what can you do")) {
+      return "I can help you with many aspects of design:\n\n• **Visual Design**: Colors, typography, layouts\n• **User Experience**: Navigation, interactions, workflows\n• **Branding**: Logos, identity, consistency\n• **Web Design**: Responsive layouts, performance\n• **App Design**: Mobile patterns, gestures\n• **Content**: Photo/video editing, optimization\n\nJust describe what you're working on and I'll provide specific guidance!";
+    }
+
     // Default responses for general queries
     const defaultResponses = [
       "That's an interesting design challenge! Could you tell me more about what you're trying to create? I can help with layouts, color schemes, typography, and component design.",
       "I'd love to help you with that! Are you working on a specific type of design - like a website, dashboard, mobile app, or something else?",
       "Great question! To give you the best advice, could you share more details about your project? I can suggest modern design patterns and best practices.",
       "I'm here to help you create stunning designs! Whether you need help with visual hierarchy, user experience, or technical implementation, just let me know what you're working on.",
+      "Interesting! I can provide guidance on many design topics. Try asking me about colors, layouts, typography, user experience, or specific design challenges you're facing.",
+      "I'm ready to help! I can assist with creative ideas, design principles, color theory, layout composition, and much more. What's your current project about?"
     ];
-    
+
     return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
   };
 
