@@ -403,11 +403,21 @@ const ModernWorkspace: React.FC = () => {
   };
 
   // Photo functions
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const url = URL.createObjectURL(file);
-      setPhotoSrc(url);
+      try {
+        const result = await apiService.uploadMedia(file, 'image');
+        setPhotoSrc(result.url);
+        await apiService.trackUsage('photo_uploaded', {
+          size: file.size,
+          dimensions: `${result.metadata?.width}x${result.metadata?.height}`
+        });
+      } catch (error) {
+        // Fallback to local URL
+        const url = URL.createObjectURL(file);
+        setPhotoSrc(url);
+      }
     }
   };
 
