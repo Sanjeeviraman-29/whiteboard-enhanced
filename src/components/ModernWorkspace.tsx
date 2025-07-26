@@ -1358,6 +1358,49 @@ const ModernWorkspace: React.FC = () => {
               </TabsTrigger>
             </TabsList>
 
+            <div className="flex-1 flex">
+              {/* Main Content Area */}
+              <div className="flex-1">{/* Content will be inside each TabsContent */}</div>
+
+              {/* AI Features Panel - Desktop Only */}
+              <div className="hidden lg:block w-96 bg-white border-l border-gray-200 overflow-y-auto">
+                <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-purple-50 to-blue-50">
+                  <h3 className="font-bold text-lg text-gray-900 flex items-center gap-2">
+                    <Brain className="w-5 h-5 text-purple-600" />
+                    AI Assistant Panel
+                  </h3>
+                  <p className="text-sm text-gray-600 mt-1">Smart AI tools for enhanced creativity</p>
+                </div>
+                <div className="p-2">
+                  <AIFeatures
+                    onImageGenerated={(imageUrl, prompt) => {
+                      const imageElement: CanvasElement = {
+                        id: Date.now().toString(),
+                        type: 'image',
+                        x: 50,
+                        y: 50,
+                        width: 200,
+                        height: 200,
+                        properties: {
+                          imageUrl: imageUrl,
+                          text: prompt
+                        }
+                      };
+                      setElements(prev => [...prev, imageElement]);
+
+                      const newHistory = [...history.slice(0, historyStep + 1), [...elements, imageElement]];
+                      setHistory(newHistory);
+                      setHistoryStep(newHistory.length - 1);
+                    }}
+                    onSuggestionApplied={(suggestion) => {
+                      console.log('Applying suggestion:', suggestion);
+                    }}
+                    currentElements={elements}
+                  />
+                </div>
+              </div>
+            </div>
+
             {/* Canvas Workspace */}
             <TabsContent value="canvas" className="flex-1 p-6">
               <div className="bg-white rounded-xl shadow-lg overflow-hidden h-full flex">
