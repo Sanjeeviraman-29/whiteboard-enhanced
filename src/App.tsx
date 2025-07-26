@@ -1,8 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
-import AppLayout from "./components/AppLayout";
-import Index from "./pages/Index";
+import ModernWorkspace from "./components/ModernWorkspace";
 import NotFound from "./pages/NotFound";
 
 function App() {
@@ -10,8 +9,8 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/canvas" element={<AppLayout />} />
-        <Route path="/workspace" element={<Index />} />
+        <Route path="/canvas" element={<ModernWorkspace />} />
+        <Route path="/workspace" element={<ModernWorkspace />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
