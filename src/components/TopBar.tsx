@@ -28,9 +28,16 @@ const TopBar: React.FC<TopBarProps> = ({ projectName, onProjectNameChange, onSav
   return (
     <header className="w-full flex items-center justify-between px-6 py-3 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-b-2xl shadow-md">
       <div className="flex items-center gap-4">
+        <Link to="/" className="flex items-center gap-2 text-white hover:text-white/80 transition-colors">
+          <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+            <Infinity className="w-5 h-5" />
+          </div>
+          <span className="font-bold text-lg">InfiniteCanvas</span>
+        </Link>
+        <div className="h-6 w-px bg-white/30 mx-2"></div>
         {editing ? (
           <input
-            className="text-2xl font-bold tracking-tight text-indigo-700 bg-white rounded px-2 py-1 outline-none shadow"
+            className="text-xl font-bold tracking-tight text-indigo-700 bg-white rounded px-2 py-1 outline-none shadow"
             value={tempName}
             onChange={e => setTempName(e.target.value)}
             onBlur={handleBlur}
@@ -41,16 +48,13 @@ const TopBar: React.FC<TopBarProps> = ({ projectName, onProjectNameChange, onSav
           />
         ) : (
           <span
-            className="text-2xl font-bold tracking-tight text-white drop-shadow cursor-pointer hover:underline"
+            className="text-xl font-bold tracking-tight text-white drop-shadow cursor-pointer hover:underline"
             onClick={handleEdit}
             title="Rename Project"
           >
             {projectName}
           </span>
         )}
-        <nav className="ml-6 text-white/80 text-sm font-medium">
-          <span className="px-2 py-1 rounded bg-white/10">Project Nav</span>
-        </nav>
       </div>
       <div className="flex items-center gap-3">
         <button
