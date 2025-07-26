@@ -227,13 +227,20 @@ const ModernWorkspace: React.FC = () => {
         projectType: currentProject.type
       };
       const response = await apiService.getAISuggestions(context);
-      if (response.success && response.data.suggestions) {
+      if (response.success && response.data?.suggestions) {
         return response.data.suggestions;
       }
+      return response.data?.suggestions || [];
     } catch (error) {
-      console.error('Failed to get AI suggestions:', error);
+      console.debug('Using fallback AI suggestions');
+      // Return fallback suggestions
+      return [
+        'Try adding more visual hierarchy to your design',
+        'Consider using complementary colors',
+        'Add some spacing between elements',
+        'Use consistent typography throughout'
+      ];
     }
-    return [];
   };
 
   // Canvas functions
