@@ -386,11 +386,13 @@ const ModernWorkspace: React.FC = () => {
       try {
         const result = await apiService.uploadMedia(file, 'video');
         setVideoSrc(result.url);
-        await apiService.trackUsage('video_uploaded', {
+        // Track usage (non-blocking)
+        apiService.trackUsage('video_uploaded', {
           size: file.size,
           duration: result.metadata?.duration
-        });
+        }).catch(() => {});
       } catch (error) {
+        console.debug('Using local video URL');
         // Fallback to local URL
         const url = URL.createObjectURL(file);
         setVideoSrc(url);
