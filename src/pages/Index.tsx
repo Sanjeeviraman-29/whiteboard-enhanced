@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ProjectTypeSelector } from '@/components/ProjectTypeSelector';
+import ProjectTypeSelector from '@/components/ProjectTypeSelector';
 import CanvasWorkspace from '@/components/CanvasWorkspace';
 
 interface ProjectType {
