@@ -520,39 +520,82 @@ const ModernWorkspace: React.FC = () => {
 
   const downloadEditedPhoto = () => {
     const photo = photoRef.current;
-    if (!photo || !photoSrc) return;
+    if (!photo || !photoSrc || !photoFile) {
+      alert('No photo to download. Please upload a photo first.');
+      return;
+    }
 
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    try {
+      // For local files, we'll use a simpler approach
+      // Create a new image element with current styles
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
 
-    canvas.width = photo.naturalWidth;
-    canvas.height = photo.naturalHeight;
+      // Set canvas size
+      canvas.width = photo.naturalWidth || photo.width;
+      canvas.height = photo.naturalHeight || photo.height;
 
-    // Apply transformations to canvas
-    ctx.translate(canvas.width / 2, canvas.height / 2);
-    ctx.rotate((rotation * Math.PI) / 180);
-    ctx.scale(flipHorizontal ? -1 : 1, flipVertical ? -1 : 1);
+      // Create a new image to avoid tainted canvas
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
 
-    // Apply filters
-    ctx.filter = `
-      brightness(${brightness}%)
-      contrast(${contrast}%)
-      saturate(${saturation}%)
-      blur(${blur}px)
-      hue-rotate(${hue}deg)
-      sepia(${sepia}%)
-      grayscale(${grayscale}%)
-      invert(${invert}%)
-    `;
+      img.onload = () => {
+        try {
+          // Clear canvas
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    ctx.drawImage(photo, -canvas.width / 2, -canvas.height / 2);
+          // Apply transformations
+          ctx.save();
+          ctx.translate(canvas.width / 2, canvas.height / 2);
+          ctx.rotate((rotation * Math.PI) / 180);
+          ctx.scale(flipHorizontal ? -1 : 1, flipVertical ? -1 : 1);
 
-    // Download the edited image
-    const link = document.createElement('a');
-    link.download = `edited-${photoFile?.name || 'photo'}.png`;
-    link.href = canvas.toDataURL();
-    link.click();
+          // Apply filters
+          ctx.filter = `
+            brightness(${brightness}%)
+            contrast(${contrast}%)
+            saturate(${saturation}%)
+            blur(${blur}px)
+            hue-rotate(${hue}deg)
+            sepia(${sepia}%)
+            grayscale(${grayscale}%)
+            invert(${invert}%)
+          `;
+
+          // Draw the image
+          ctx.drawImage(img, -canvas.width / 2, -canvas.height / 2);
+          ctx.restore();
+
+          // Download
+          canvas.toBlob((blob) => {
+            if (blob) {
+              const url = URL.createObjectURL(blob);
+              const link = document.createElement('a');
+              link.download = `edited-${photoFile.name}`;
+              link.href = url;
+              link.click();
+              URL.revokeObjectURL(url);
+            }
+          }, 'image/png');
+
+        } catch (error) {
+          console.error('Canvas export failed:', error);
+          alert('Download failed. Try saving a screenshot instead.');
+        }
+      };
+
+      img.onerror = () => {
+        alert('Could not process image for download. Try saving a screenshot instead.');
+      };
+
+      // Load the image (this should work for local blob URLs)
+      img.src = photoSrc;
+
+    } catch (error) {
+      console.error('Download failed:', error);
+      alert('Download failed. Your browser may not support this feature for this image type.');
+    }
   };
 
   useEffect(() => {
