@@ -256,28 +256,35 @@ const ModernWorkspace: React.FC = () => {
     return null;
   };
 
-  const getAISuggestions = async () => {
-    try {
-      const context = {
-        mode: activeMode,
-        elements: elements.slice(0, 10), // Send limited context
-        projectType: currentProject.type
-      };
-      const response = await apiService.getAISuggestions(context);
-      if (response.success && response.data?.suggestions) {
-        return response.data.suggestions;
-      }
-      return response.data?.suggestions || [];
-    } catch (error) {
-      console.debug('Using fallback AI suggestions');
-      // Return fallback suggestions
-      return [
-        'Try adding more visual hierarchy to your design',
-        'Consider using complementary colors',
-        'Add some spacing between elements',
-        'Use consistent typography throughout'
-      ];
+  const getAISuggestions = () => {
+    // Local AI suggestions - no network requests
+    const suggestions = [
+      'Try adding more visual hierarchy to your design',
+      'Consider using complementary colors for better contrast',
+      'Add some spacing between elements for better readability',
+      'Use consistent typography throughout your design',
+      'Apply AI enhance to improve colors and visibility',
+      'Try the auto-complete feature to finish incomplete shapes',
+      'Use text-to-image to generate creative elements'
+    ];
+
+    // Return contextual suggestions based on current elements
+    if (elements.length === 0) {
+      return ['Start by drawing some shapes or adding text to get AI suggestions!'];
     }
+
+    const hasText = elements.some(el => el.type === 'text');
+    const hasShapes = elements.some(el => el.type === 'rectangle' || el.type === 'circle');
+
+    if (!hasText && hasShapes) {
+      return ['Consider adding text labels to your shapes', ...suggestions.slice(0, 3)];
+    }
+
+    if (!hasShapes && hasText) {
+      return ['Try adding some shapes to complement your text', ...suggestions.slice(0, 3)];
+    }
+
+    return suggestions.slice(0, 4);
   };
 
   // Canvas functions
