@@ -364,7 +364,12 @@ const ModernWorkspace: React.FC = () => {
     setLastPos(pos);
   };
 
-  const stopDrawing = () => {
+  const stopDrawing = (e?: React.MouseEvent) => {
+    if (selectedTool === 'flow' && lastPos && e) {
+      const pos = getCanvasPosition(e);
+      addFlowConnection(lastPos.x, lastPos.y, pos.x, pos.y);
+    }
+
     setIsDrawing(false);
     setLastPos(null);
 
@@ -383,6 +388,9 @@ const ModernWorkspace: React.FC = () => {
 
     // Save to localStorage only (no network requests)
     localStorage.setItem(`project-${updatedProject.id}`, JSON.stringify(updatedProject));
+
+    // Update current storyboard frame if in storyboard mode
+    updateCurrentFrame();
   };
 
   // Storyboarding functions
