@@ -224,21 +224,7 @@ const ModernWorkspace: React.FC = () => {
   };
 
   // AI integration functions
-  const enhanceWithAI = async (elements: CanvasElement[]) => {
-    try {
-      const response = await apiService.enhanceWithAI(elements, activeMode);
-      if (response.success) {
-        // Show AI suggestions to user
-        if (response.suggestions) {
-          console.log('AI Suggestions:', response.suggestions);
-        }
-        return response.data.elements || elements;
-      }
-    } catch (error) {
-      console.error('AI enhancement failed:', error);
-    }
-    return elements;
-  };
+  // Removed the old enhanceWithAI function that was causing fetch errors
 
   const generateAIContent = async (prompt: string, type: string) => {
     try {
