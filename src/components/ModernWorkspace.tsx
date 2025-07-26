@@ -400,20 +400,32 @@ const ModernWorkspace: React.FC = () => {
   const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Store file reference
+      setVideoFile(file);
+
       try {
         const result = await apiService.uploadMedia(file, 'video');
         setVideoSrc(result.url);
+        console.log('Video uploaded successfully:', file.name);
+
         // Track usage (non-blocking)
         apiService.trackUsage('video_uploaded', {
           size: file.size,
-          duration: result.metadata?.duration
+          type: file.type,
+          name: file.name
         }).catch(() => {});
       } catch (error) {
-        console.debug('Using local video URL');
-        // Fallback to local URL
+        console.debug('Using local video URL for:', file.name);
+        // Always use local URL for device files
         const url = URL.createObjectURL(file);
         setVideoSrc(url);
       }
+
+      // Reset filters and trim when new video is uploaded
+      setVideoFilters({ brightness: 100, contrast: 100, saturation: 100, sepia: 0 });
+      setVideoTrim({ start: 0, end: 0 });
+      setCurrentTime(0);
+      setIsPlaying(false);
     }
   };
 
