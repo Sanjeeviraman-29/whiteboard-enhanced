@@ -56,13 +56,8 @@ import {
   Trash2
 } from "lucide-react";
 
-interface Project {
-  id: string;
-  name: string;
-  type: 'canvas' | 'video' | 'photo' | 'design';
-  thumbnail?: string;
-  lastModified: Date;
-}
+// Use API Project type
+type Project = APIProject;
 
 interface CanvasElement {
   id: string;
