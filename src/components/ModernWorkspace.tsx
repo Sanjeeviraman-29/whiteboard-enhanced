@@ -419,11 +419,13 @@ const ModernWorkspace: React.FC = () => {
       try {
         const result = await apiService.uploadMedia(file, 'image');
         setPhotoSrc(result.url);
-        await apiService.trackUsage('photo_uploaded', {
+        // Track usage (non-blocking)
+        apiService.trackUsage('photo_uploaded', {
           size: file.size,
           dimensions: `${result.metadata?.width}x${result.metadata?.height}`
-        });
+        }).catch(() => {});
       } catch (error) {
+        console.debug('Using local photo URL');
         // Fallback to local URL
         const url = URL.createObjectURL(file);
         setPhotoSrc(url);
