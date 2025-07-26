@@ -22,7 +22,7 @@ To unlock the complete AI-powered capabilities of your digital creator whiteboar
 
 2. **Add Your API Key**: Add this line to your `.env` file:
    ```
-   REACT_APP_OPENAI_API_KEY=your_api_key_here
+   VITE_OPENAI_API_KEY=your_api_key_here
    ```
 
 3. **Secure Your Key**: Make sure `.env` is in your `.gitignore` file to keep your key private:
