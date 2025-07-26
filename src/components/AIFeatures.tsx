@@ -101,7 +101,7 @@ const AIFeatures: React.FC<AIFeaturesProps> = ({
   const responseRef = useRef<HTMLDivElement>(null);
 
   // Check if online mode is available
-  const isOnlineMode = Boolean(process.env.REACT_APP_OPENAI_API_KEY);
+  const isOnlineMode = Boolean(import.meta.env.VITE_OPENAI_API_KEY);
 
   // Text-to-Image Generation Function
   const handleImageGeneration = async () => {
