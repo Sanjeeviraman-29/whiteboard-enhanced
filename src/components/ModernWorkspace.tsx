@@ -226,21 +226,7 @@ const ModernWorkspace: React.FC = () => {
   // AI integration functions
   // Removed the old enhanceWithAI function that was causing fetch errors
 
-  const generateAIContent = async (prompt: string, type: string) => {
-    try {
-      const response = await apiService.generateAIContent(prompt, type);
-      if (response.success) {
-        await apiService.trackUsage('ai_content_generated', {
-          type,
-          prompt: prompt.substring(0, 50)
-        });
-        return response.data.content;
-      }
-    } catch (error) {
-      console.error('AI generation failed:', error);
-    }
-    return null;
-  };
+  // Removed the old generateAIContent function - now using local text-to-image generation
 
   const getAISuggestions = () => {
     // Local AI suggestions - no network requests
