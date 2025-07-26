@@ -375,15 +375,39 @@ const ModernWorkspace: React.FC = () => {
 
   const undo = () => {
     if (historyStep > 0) {
-      setHistoryStep(prev => prev - 1);
-      setElements(history[historyStep - 1]);
+      const newStep = historyStep - 1;
+      setHistoryStep(newStep);
+      setElements(history[newStep] || []);
+
+      // Clear and redraw canvas
+      const canvas = canvasRef.current;
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+      }
     }
   };
 
   const redo = () => {
     if (historyStep < history.length - 1) {
-      setHistoryStep(prev => prev + 1);
-      setElements(history[historyStep + 1]);
+      const newStep = historyStep + 1;
+      setHistoryStep(newStep);
+      setElements(history[newStep] || []);
+
+      // Clear and redraw canvas
+      const canvas = canvasRef.current;
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+      }
     }
   };
 
