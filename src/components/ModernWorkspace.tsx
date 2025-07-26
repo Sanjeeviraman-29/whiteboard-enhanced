@@ -741,13 +741,31 @@ const ModernWorkspace: React.FC = () => {
               <div className="bg-white rounded-xl shadow-lg overflow-hidden h-full flex flex-col">
                 <div className="flex-1 bg-gray-900 flex items-center justify-center relative">
                   {videoSrc ? (
-                    <video
-                      ref={videoRef}
-                      src={videoSrc}
-                      className="max-w-full max-h-full"
-                      onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
-                      onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
-                    />
+                    <>
+                      <video
+                        ref={videoRef}
+                        src={videoSrc}
+                        className="max-w-full max-h-full"
+                        onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
+                        onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
+                      />
+                      {/* Upload New Video Button */}
+                      <div className="absolute top-4 right-4">
+                        <input
+                          type="file"
+                          accept="video/*"
+                          onChange={handleVideoUpload}
+                          className="hidden"
+                          id="video-upload-new"
+                        />
+                        <label htmlFor="video-upload-new">
+                          <Button variant="outline" size="sm" className="bg-white/90 hover:bg-white">
+                            <Upload className="w-4 h-4 mr-2" />
+                            Upload New
+                          </Button>
+                        </label>
+                      </div>
+                    </>
                   ) : (
                     <div className="text-center text-gray-400">
                       <Video className="w-16 h-16 mx-auto mb-4" />
