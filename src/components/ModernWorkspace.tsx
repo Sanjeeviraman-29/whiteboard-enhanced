@@ -931,12 +931,30 @@ const ModernWorkspace: React.FC = () => {
               <div className="bg-white rounded-xl shadow-lg overflow-hidden h-full flex">
                 <div className="flex-1 bg-gray-900 flex items-center justify-center relative">
                   {photoSrc ? (
-                    <img
-                      ref={photoRef}
-                      src={photoSrc}
-                      alt="Edit"
-                      className="max-w-full max-h-full object-contain"
-                    />
+                    <>
+                      <img
+                        ref={photoRef}
+                        src={photoSrc}
+                        alt="Edit"
+                        className="max-w-full max-h-full object-contain"
+                      />
+                      {/* Upload New Photo Button */}
+                      <div className="absolute top-4 right-4">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handlePhotoUpload}
+                          className="hidden"
+                          id="photo-upload-new"
+                        />
+                        <label htmlFor="photo-upload-new">
+                          <Button variant="outline" size="sm" className="bg-white/90 hover:bg-white">
+                            <Upload className="w-4 h-4 mr-2" />
+                            Upload New
+                          </Button>
+                        </label>
+                      </div>
+                    </>
                   ) : (
                     <div className="text-center text-gray-400">
                       <ImageIcon className="w-16 h-16 mx-auto mb-4" />
