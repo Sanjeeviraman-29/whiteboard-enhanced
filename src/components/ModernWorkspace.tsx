@@ -485,29 +485,30 @@ const ModernWorkspace: React.FC = () => {
   }, [videoFilters]);
 
   // Photo functions
-  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       // Store file reference
       setPhotoFile(file);
 
-      try {
-        const result = await apiService.uploadMedia(file, 'image');
-        setPhotoSrc(result.url);
-        console.log('Photo uploaded successfully:', file.name);
+      // Always use local URL immediately for best user experience
+      const url = URL.createObjectURL(file);
+      setPhotoSrc(url);
+      console.log('Photo loaded:', file.name);
 
-        // Track usage (non-blocking)
-        apiService.trackUsage('photo_uploaded', {
-          size: file.size,
-          type: file.type,
-          name: file.name
-        }).catch(() => {});
-      } catch (error) {
-        console.debug('Using local photo URL for:', file.name);
-        // Always use local URL for device files
-        const url = URL.createObjectURL(file);
-        setPhotoSrc(url);
-      }
+      // Background processing (completely non-blocking)
+      Promise.resolve().then(async () => {
+        try {
+          await apiService.uploadMedia(file, 'image');
+          await apiService.trackUsage('photo_uploaded', {
+            size: file.size,
+            type: file.type,
+            name: file.name
+          });
+        } catch (error) {
+          // Silent background processing
+        }
+      }).catch(() => {});
 
       // Reset all filters when new photo is uploaded
       setBrightness(100);
