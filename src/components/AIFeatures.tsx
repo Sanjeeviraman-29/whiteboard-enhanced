@@ -53,7 +53,9 @@ import {
   ChevronUp,
   Copy,
   Check,
-  Loader2
+  Loader2,
+  Globe,
+  Wifi
 } from 'lucide-react';
 
 interface AIFeaturesProps {
@@ -98,6 +100,9 @@ const AIFeatures: React.FC<AIFeaturesProps> = ({
 
   const responseRef = useRef<HTMLDivElement>(null);
 
+  // Check if online mode is available
+  const isOnlineMode = Boolean(process.env.REACT_APP_OPENAI_API_KEY);
+
   // Text-to-Image Generation Function
   const handleImageGeneration = async () => {
     if (!imagePrompt.trim()) {
@@ -108,63 +113,48 @@ const AIFeatures: React.FC<AIFeaturesProps> = ({
     setIsGeneratingImage(true);
     
     try {
-      // TODO: Connect to AI Image Generation API
-      //
-      // Option 1: OpenAI DALL-E API
-      // const response = await fetch('https://api.openai.com/v1/images/generations', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`
-      //   },
-      //   body: JSON.stringify({
-      //     model: "dall-e-3",
-      //     prompt: imagePrompt,
-      //     size: '1024x1024',
-      //     quality: 'standard',
-      //     n: 1
-      //   })
-      // });
-      //
-      // Option 2: Stability AI API
-      // const response = await fetch('https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': `Bearer ${process.env.REACT_APP_STABILITY_API_KEY}`
-      //   },
-      //   body: JSON.stringify({
-      //     text_prompts: [{ text: imagePrompt }],
-      //     cfg_scale: 7,
-      //     height: 1024,
-      //     width: 1024,
-      //     steps: 20,
-      //     samples: 1
-      //   })
-      // });
-      //
-      // Option 3: Replicate API
-      // const response = await fetch('https://api.replicate.com/v1/predictions', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Authorization': `Token ${process.env.REACT_APP_REPLICATE_API_TOKEN}`,
-      //     'Content-Type': 'application/json'
-      //   },
-      //   body: JSON.stringify({
-      //     version: "ac732df83cea7fff18b8472768c88ad041fa750ff7682a21affe81863cbe77e4",
-      //     input: { prompt: imagePrompt }
-      //   })
-      // });
-      //
-      // For Tauri/Electron Desktop Apps:
-      // Use the built-in HTTP client or invoke backend commands
-      // Tauri: window.__TAURI__.http.fetch()
-      // Electron: Use ipcRenderer to communicate with main process
+      // Real OpenAI DALL-E API Integration - ONLINE MODE
+      const OPENAI_API_KEY = process.env.REACT_APP_OPENAI_API_KEY;
       
-      // Simulate API call for demo
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      if (OPENAI_API_KEY) {
+        // Use real OpenAI API for online image generation
+        const response = await fetch('https://api.openai.com/v1/images/generations', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${OPENAI_API_KEY}`
+          },
+          body: JSON.stringify({
+            model: "dall-e-3",
+            prompt: imagePrompt,
+            size: '1024x1024',
+            quality: 'standard',
+            n: 1
+          })
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          const imageUrl = data.data[0].url;
+          
+          const newImage: GeneratedImage = {
+            id: Date.now().toString(),
+            url: imageUrl,
+            prompt: imagePrompt,
+            timestamp: new Date()
+          };
+          
+          setGeneratedImages(prev => [newImage, ...prev]);
+          onImageGenerated?.(newImage.url, newImage.prompt);
+          setImagePrompt('');
+          return;
+        } else {
+          console.warn('OpenAI API failed, falling back to mock generation');
+        }
+      }
       
-      // TODO: Replace with actual generated image URL from API
+      // Fallback to mock generation if no API key or API fails
+      await new Promise(resolve => setTimeout(resolve, 2000));
       const mockImageUrl = await generateMockImage(imagePrompt);
       
       const newImage: GeneratedImage = {
@@ -249,66 +239,59 @@ const AIFeatures: React.FC<AIFeaturesProps> = ({
     setCurrentResponse('');
 
     try {
-      // TODO: Connect to AI Chat/Suggestions API
-      //
-      // Option 1: OpenAI GPT-4 API
-      // const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`
-      //   },
-      //   body: JSON.stringify({
-      //     model: "gpt-4",
-      //     messages: [
-      //       {
-      //         role: "system",
-      //         content: "You are a professional design assistant. Provide specific, actionable advice for improving digital designs, layouts, colors, and user experience."
-      //       },
-      //       {
-      //         role: "user",
-      //         content: `Design context: ${JSON.stringify(currentElements.slice(0, 5))}. Question: ${assistantPrompt}`
-      //       }
-      //     ],
-      //     max_tokens: 500,
-      //     temperature: 0.7
-      //   })
-      // });
-      //
-      // Option 2: Custom Backend API
-      // const response = await fetch('/api/design-suggestions', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     prompt: assistantPrompt,
-      //     elements: currentElements,
-      //     canvas_size: { width: 800, height: 600 },
-      //     design_mode: 'creative'
-      //   })
-      // });
-      //
-      // Option 3: Google Gemini API
-      // const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.REACT_APP_GEMINI_API_KEY}`, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     contents: [{
-      //       parts: [{ text: `As a design expert, help improve this design: ${assistantPrompt}. Context: ${JSON.stringify(currentElements)}` }]
-      //     }]
-      //   })
-      // });
-      //
-      // For Desktop Apps (Tauri/Electron):
-      // - Store API keys securely in environment files
-      // - Use native HTTP clients for better security
-      // - Consider local AI models for offline functionality
-
-      // Generate contextual suggestions
+      // Real OpenAI GPT-4 API Integration - ONLINE MODE
+      const OPENAI_API_KEY = process.env.REACT_APP_OPENAI_API_KEY;
+      let aiResponse = '';
+      
+      if (OPENAI_API_KEY) {
+        // Use real OpenAI ChatGPT API for online assistance
+        try {
+          const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${OPENAI_API_KEY}`
+            },
+            body: JSON.stringify({
+              model: "gpt-4",
+              messages: [
+                {
+                  role: "system",
+                  content: "You are a professional design assistant specializing in digital art, UI/UX design, and creative direction. Provide specific, actionable advice for improving designs, layouts, colors, and user experience. Be concise but detailed."
+                },
+                {
+                  role: "user",
+                  content: `Design context: I have ${currentElements.length} elements on my canvas including ${currentElements.filter(el => el.type === 'text').length} text elements, ${currentElements.filter(el => el.type === 'rectangle').length} rectangles, and ${currentElements.filter(el => el.type === 'circle').length} circles. Question: ${assistantPrompt}`
+                }
+              ],
+              max_tokens: 300,
+              temperature: 0.7
+            })
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            aiResponse = data.choices[0].message.content;
+            
+            // Simulate typing effect with real AI response
+            await simulateTypingEffect(aiResponse);
+            
+            // Generate structured suggestions from AI response
+            const aiSuggestions = parseAIResponseToSuggestions(aiResponse);
+            setSuggestions(aiSuggestions);
+            setAssistantPrompt('');
+            return;
+          } else {
+            console.warn('OpenAI API failed, falling back to local suggestions');
+          }
+        } catch (error) {
+          console.warn('OpenAI API error, falling back to local suggestions:', error);
+        }
+      }
+      
+      // Fallback to contextual suggestions if no API key or API fails
       const mockSuggestions = generateContextualSuggestions(assistantPrompt, currentElements);
-      
-      // Simulate typing effect
       await simulateTypingEffect(mockSuggestions[0]?.text || 'Here are some suggestions for your design...');
-      
       setSuggestions(mockSuggestions);
       setAssistantPrompt('');
       
@@ -366,6 +349,40 @@ const AIFeatures: React.FC<AIFeaturesProps> = ({
     return suggestions;
   };
 
+  // Parse AI response into structured suggestions
+  const parseAIResponseToSuggestions = (response: string): AISuggestion[] => {
+    const suggestions: AISuggestion[] = [];
+    
+    // Split response into actionable parts
+    const sentences = response.split(/[.!]/).filter(s => s.trim().length > 20);
+    
+    sentences.forEach((sentence, index) => {
+      const trimmed = sentence.trim();
+      if (trimmed) {
+        let category: AISuggestion['category'] = 'creativity';
+        
+        if (trimmed.toLowerCase().includes('color') || trimmed.toLowerCase().includes('palette')) {
+          category = 'color';
+        } else if (trimmed.toLowerCase().includes('layout') || trimmed.toLowerCase().includes('composition') || trimmed.toLowerCase().includes('position')) {
+          category = 'layout';
+        } else if (trimmed.toLowerCase().includes('font') || trimmed.toLowerCase().includes('text') || trimmed.toLowerCase().includes('typography')) {
+          category = 'typography';
+        } else if (trimmed.toLowerCase().includes('balance') || trimmed.toLowerCase().includes('spacing') || trimmed.toLowerCase().includes('align')) {
+          category = 'composition';
+        }
+        
+        suggestions.push({
+          id: `ai-${Date.now()}-${index}`,
+          text: trimmed + '.',
+          category,
+          confidence: 0.9
+        });
+      }
+    });
+    
+    return suggestions.slice(0, 3); // Limit to 3 suggestions
+  };
+
   // Simulate typing effect
   const simulateTypingEffect = async (text: string) => {
     const words = text.split(' ');
@@ -412,59 +429,79 @@ const AIFeatures: React.FC<AIFeaturesProps> = ({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-8 p-6 max-w-4xl mx-auto">
+      {/* Online Status Banner */}
+      <div className={`p-4 rounded-xl border-2 ${isOnlineMode ? 'bg-green-50 border-green-300' : 'bg-orange-50 border-orange-300'}`}>
+        <div className="flex items-center justify-center gap-3">
+          {isOnlineMode ? (
+            <>
+              <Globe className="w-5 h-5 text-green-600" />
+              <span className="font-semibold text-green-800">🌐 Online Mode Active - Real AI Integration</span>
+              <Badge className="bg-green-100 text-green-800">ChatGPT & DALL-E</Badge>
+            </>
+          ) : (
+            <>
+              <Wifi className="w-5 h-5 text-orange-600" />
+              <span className="font-semibold text-orange-800">📱 Demo Mode - Add API Key for Full Features</span>
+              <Badge className="bg-orange-100 text-orange-800">Local Simulation</Badge>
+            </>
+          )}
+        </div>
+      </div>
+
       {/* AI Image Generator */}
-      <Card className="bg-white/95 backdrop-blur-sm border-purple-200 shadow-lg">
-        <CardHeader className="pb-3">
+      <Card className="bg-gradient-to-br from-purple-50 to-pink-50 border-purple-300 shadow-xl">
+        <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg">
-                <Wand2 className="w-4 h-4 text-white" />
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl shadow-lg">
+                <Wand2 className="w-6 h-6 text-white" />
               </div>
-              <CardTitle className="text-lg font-semibold text-gray-900">
-                AI Image Generator
-              </CardTitle>
-              <Badge variant="secondary" className="bg-purple-100 text-purple-700 text-xs">
-                ✨ Powered by AI
-              </Badge>
+              <div>
+                <CardTitle className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                  AI Image Generator
+                  {isOnlineMode && <Badge className="bg-purple-100 text-purple-700">✨ DALL-E Powered</Badge>}
+                </CardTitle>
+                <p className="text-sm text-gray-600 mt-1">
+                  Generate unique visuals from your imagination
+                </p>
+              </div>
             </div>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setIsImageSectionCollapsed(!isImageSectionCollapsed)}
+              className="hover:bg-purple-100"
             >
-              {isImageSectionCollapsed ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
+              {isImageSectionCollapsed ? <ChevronDown className="w-5 h-5" /> : <ChevronUp className="w-5 h-5" />}
             </Button>
           </div>
-          <p className="text-sm text-gray-600">
-            Generate unique visuals from your imagination
-          </p>
         </CardHeader>
 
         {!isImageSectionCollapsed && (
-          <CardContent className="space-y-4">
-            <div className="flex gap-2">
+          <CardContent className="space-y-6">
+            <div className="flex gap-3">
               <Input
-                placeholder="Describe your idea... (e.g., 'a futuristic city at sunset')"
+                placeholder="Describe your idea... (e.g., 'a futuristic city at sunset', 'cute cartoon cat')"
                 value={imagePrompt}
                 onChange={(e) => setImagePrompt(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && !isGeneratingImage && handleImageGeneration()}
-                className="flex-1"
+                className="flex-1 bg-white text-black placeholder:text-gray-600 border-purple-300 focus:border-purple-500 focus:ring-purple-500 h-12 text-base"
                 disabled={isGeneratingImage}
               />
               <Button 
                 onClick={handleImageGeneration}
                 disabled={isGeneratingImage || !imagePrompt.trim()}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700"
+                className="bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700 shadow-lg hover:shadow-xl transition-all duration-200 h-12 px-6"
               >
                 {isGeneratingImage ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                     Generating...
                   </>
                 ) : (
                   <>
-                    <Wand2 className="w-4 h-4 mr-2" />
+                    <Wand2 className="w-5 h-5 mr-2" />
                     Generate Image
                   </>
                 )}
@@ -473,32 +510,36 @@ const AIFeatures: React.FC<AIFeaturesProps> = ({
 
             {/* Generated Images Display */}
             {generatedImages.length > 0 && (
-              <div className="space-y-3">
-                <h4 className="font-medium text-gray-900">Generated Images</h4>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <div className="space-y-4 bg-white/80 p-6 rounded-xl border-2 border-purple-200 shadow-inner">
+                <h4 className="font-bold text-black text-lg flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-purple-600" />
+                  Generated Images
+                </h4>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {generatedImages.slice(0, 6).map((image) => (
                     <div key={image.id} className="relative group">
                       <img
                         src={image.url}
                         alt={image.prompt}
-                        className="w-full h-24 object-cover rounded-lg border-2 border-gray-200 hover:border-purple-400 transition-colors cursor-pointer"
+                        className="w-full h-32 object-cover rounded-xl border-3 border-gray-200 hover:border-purple-400 transition-all duration-200 cursor-pointer shadow-md hover:shadow-lg"
                         onClick={() => onImageGenerated?.(image.url, image.prompt)}
                       />
-                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
+                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center">
                         <Button
                           size="sm"
                           variant="outline"
-                          className="bg-white text-black hover:bg-gray-100"
+                          className="bg-white text-black hover:bg-gray-100 shadow-lg"
                           onClick={(e) => {
                             e.stopPropagation();
                             downloadImage(image);
                           }}
                         >
-                          <Download className="w-3 h-3" />
+                          <Download className="w-4 h-4 mr-1" />
+                          Download
                         </Button>
                       </div>
-                      <div className="absolute bottom-1 left-1 bg-black/70 text-white text-xs px-1 rounded">
-                        {image.prompt.substring(0, 20)}...
+                      <div className="absolute bottom-2 left-2 bg-black/80 text-white text-xs px-2 py-1 rounded-lg">
+                        {image.prompt.substring(0, 25)}...
                       </div>
                     </div>
                   ))}
@@ -510,57 +551,58 @@ const AIFeatures: React.FC<AIFeaturesProps> = ({
       </Card>
 
       {/* Smart Assistant */}
-      <Card className="bg-white/95 backdrop-blur-sm border-blue-200 shadow-lg">
-        <CardHeader className="pb-3">
+      <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-300 shadow-xl">
+        <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="p-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg">
-                <Lightbulb className="w-4 h-4 text-white" />
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl shadow-lg">
+                <Lightbulb className="w-6 h-6 text-white" />
               </div>
-              <CardTitle className="text-lg font-semibold text-gray-900">
-                Smart Assistant
-              </CardTitle>
-              <Badge variant="secondary" className="bg-blue-100 text-blue-700 text-xs">
-                💡 AI Powered
-              </Badge>
+              <div>
+                <CardTitle className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                  Smart Assistant
+                  {isOnlineMode && <Badge className="bg-blue-100 text-blue-700">💡 GPT-4 Powered</Badge>}
+                </CardTitle>
+                <p className="text-sm text-gray-600 mt-1">
+                  AI can help improve layout, colors, and creative ideas
+                </p>
+              </div>
             </div>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setIsAssistantCollapsed(!isAssistantCollapsed)}
+              className="hover:bg-blue-100"
             >
-              {isAssistantCollapsed ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
+              {isAssistantCollapsed ? <ChevronDown className="w-5 h-5" /> : <ChevronUp className="w-5 h-5" />}
             </Button>
           </div>
-          <p className="text-sm text-gray-600">
-            AI can help improve layout, colors, and creative ideas
-          </p>
         </CardHeader>
 
         {!isAssistantCollapsed && (
-          <CardContent className="space-y-4">
-            <div className="flex gap-2">
+          <CardContent className="space-y-6">
+            <div className="flex gap-3">
               <Input
                 placeholder="Ask how to improve your design... (e.g., 'How can I make this more colorful?')"
                 value={assistantPrompt}
                 onChange={(e) => setAssistantPrompt(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && !isGeneratingSuggestion && handleSuggestionGeneration()}
-                className="flex-1"
+                className="flex-1 bg-white text-black placeholder:text-gray-600 border-blue-300 focus:border-blue-500 focus:ring-blue-500 h-12 text-base"
                 disabled={isGeneratingSuggestion}
               />
               <Button 
                 onClick={handleSuggestionGeneration}
                 disabled={isGeneratingSuggestion || !assistantPrompt.trim()}
-                className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white hover:from-blue-700 hover:to-cyan-700"
+                className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white hover:from-blue-700 hover:to-cyan-700 shadow-lg hover:shadow-xl transition-all duration-200 h-12 px-6"
               >
                 {isGeneratingSuggestion ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                     Thinking...
                   </>
                 ) : (
                   <>
-                    <Send className="w-4 h-4 mr-2" />
+                    <Send className="w-5 h-5 mr-2" />
                     Ask AI
                   </>
                 )}
@@ -569,17 +611,29 @@ const AIFeatures: React.FC<AIFeaturesProps> = ({
 
             {/* AI Response Area */}
             {(currentResponse || suggestions.length > 0) && (
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {/* Current Response with Typing Effect */}
                 {currentResponse && (
-                  <div className="p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg border border-blue-200">
-                    <div className="flex items-start gap-2">
-                      <Lightbulb className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <div className="p-6 bg-white border-2 border-blue-300 rounded-xl shadow-lg">
+                    <div className="flex items-start gap-4">
+                      <div className="p-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex-shrink-0">
+                        <Lightbulb className="w-5 h-5 text-white" />
+                      </div>
                       <div className="flex-1">
-                        <p className="text-gray-800 leading-relaxed">
-                          {currentResponse}
-                          {isTyping && <span className="animate-pulse">|</span>}
-                        </p>
+                        <h5 className="font-bold text-black mb-3 flex items-center gap-2">
+                          AI Assistant Response
+                          {isOnlineMode && (
+                            <Badge className="bg-green-100 text-green-800 text-xs">
+                              🌐 Online
+                            </Badge>
+                          )}
+                        </h5>
+                        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                          <p className="text-black leading-relaxed font-medium">
+                            {currentResponse}
+                            {isTyping && <span className="animate-pulse text-blue-600 font-bold">|</span>}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -587,97 +641,146 @@ const AIFeatures: React.FC<AIFeaturesProps> = ({
 
                 {/* Suggestions List */}
                 {suggestions.length > 0 && !isTyping && (
-                  <ScrollArea className="max-h-40">
-                    <div className="space-y-2">
-                      {suggestions.map((suggestion) => (
-                        <div
-                          key={suggestion.id}
-                          className="p-3 bg-gray-50 rounded-lg border border-gray-200 hover:border-blue-300 transition-colors"
-                        >
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-1">
-                                <Badge variant="outline" className="text-xs">
-                                  {suggestion.category}
-                                </Badge>
-                                <span className="text-xs text-gray-500">
-                                  {Math.round(suggestion.confidence * 100)}% confidence
-                                </span>
+                  <div className="bg-white/90 p-6 rounded-xl border-2 border-blue-200 shadow-inner">
+                    <h5 className="font-bold text-black mb-4 flex items-center gap-2">
+                      <Sparkles className="w-5 h-5 text-blue-600" />
+                      AI Suggestions
+                    </h5>
+                    <ScrollArea className="max-h-60">
+                      <div className="space-y-4">
+                        {suggestions.map((suggestion) => (
+                          <div
+                            key={suggestion.id}
+                            className="p-5 bg-white rounded-xl border-2 border-gray-200 hover:border-blue-400 transition-all duration-200 shadow-sm hover:shadow-md"
+                          >
+                            <div className="flex items-start justify-between gap-4">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-3">
+                                  <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-300 font-medium">
+                                    {suggestion.category}
+                                  </Badge>
+                                  <span className="text-xs text-gray-600 font-medium">
+                                    {Math.round(suggestion.confidence * 100)}% confidence
+                                  </span>
+                                </div>
+                                <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                                  <p className="text-black font-medium leading-relaxed">{suggestion.text}</p>
+                                </div>
                               </div>
-                              <p className="text-sm text-gray-700">{suggestion.text}</p>
-                            </div>
-                            <div className="flex gap-1">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => copySuggestion(suggestion.text, suggestion.id)}
-                                className="p-1 h-7 w-7"
-                              >
-                                {copiedSuggestion === suggestion.id ? (
-                                  <Check className="w-3 h-3 text-green-600" />
-                                ) : (
-                                  <Copy className="w-3 h-3" />
-                                )}
-                              </Button>
-                              <Button
-                                size="sm"
-                                onClick={() => applySuggestion(suggestion)}
-                                className="bg-blue-600 text-white hover:bg-blue-700 px-3 h-7 text-xs"
-                              >
-                                Apply
-                              </Button>
+                              <div className="flex gap-2">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => copySuggestion(suggestion.text, suggestion.id)}
+                                  className="p-2 h-9 w-9 hover:bg-gray-100"
+                                >
+                                  {copiedSuggestion === suggestion.id ? (
+                                    <Check className="w-4 h-4 text-green-600" />
+                                  ) : (
+                                    <Copy className="w-4 h-4" />
+                                  )}
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  onClick={() => applySuggestion(suggestion)}
+                                  className="bg-blue-600 text-white hover:bg-blue-700 px-4 h-9 text-sm font-medium"
+                                >
+                                  Apply
+                                </Button>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                  </ScrollArea>
+                        ))}
+                      </div>
+                    </ScrollArea>
+                  </div>
                 )}
               </div>
             )}
 
-            {/* Quick Suggestion Buttons */}
-            <div className="flex flex-wrap gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  setAssistantPrompt('How can I improve the colors in my design?');
-                  handleSuggestionGeneration();
-                }}
-                className="text-xs"
-                disabled={isGeneratingSuggestion}
-              >
-                Improve Colors
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  setAssistantPrompt('How can I make my layout more balanced?');
-                  handleSuggestionGeneration();
-                }}
-                className="text-xs"
-                disabled={isGeneratingSuggestion}
-              >
-                Better Layout
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  setAssistantPrompt('What creative elements can I add?');
-                  handleSuggestionGeneration();
-                }}
-                className="text-xs"
-                disabled={isGeneratingSuggestion}
-              >
-                Creative Ideas
-              </Button>
+            {/* API Status and Quick Suggestion Buttons */}
+            <div className="bg-white/80 p-5 rounded-xl border-2 border-blue-200">
+              <div className="flex items-center justify-between mb-4">
+                <h5 className="font-bold text-black">Quick Actions</h5>
+                <div className="flex items-center gap-2">
+                  {isOnlineMode ? (
+                    <Badge className="bg-green-100 text-green-800 font-medium">
+                      🌐 Online Mode
+                    </Badge>
+                  ) : (
+                    <Badge className="bg-orange-100 text-orange-800 font-medium">
+                      📱 Demo Mode
+                    </Badge>
+                  )}
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setAssistantPrompt('How can I improve the colors in my design?');
+                    handleSuggestionGeneration();
+                  }}
+                  className="text-sm bg-white text-black border-blue-300 hover:bg-blue-50 font-medium px-4 py-2"
+                  disabled={isGeneratingSuggestion}
+                >
+                  Improve Colors
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setAssistantPrompt('How can I make my layout more balanced?');
+                    handleSuggestionGeneration();
+                  }}
+                  className="text-sm bg-white text-black border-blue-300 hover:bg-blue-50 font-medium px-4 py-2"
+                  disabled={isGeneratingSuggestion}
+                >
+                  Better Layout
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setAssistantPrompt('What creative elements can I add?');
+                    handleSuggestionGeneration();
+                  }}
+                  className="text-sm bg-white text-black border-blue-300 hover:bg-blue-50 font-medium px-4 py-2"
+                  disabled={isGeneratingSuggestion}
+                >
+                  Creative Ideas
+                </Button>
+              </div>
             </div>
           </CardContent>
         )}
       </Card>
+
+      {/* Setup Instructions for API Integration */}
+      {!isOnlineMode && (
+        <Card className="bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-300 shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-lg font-bold text-gray-900 flex items-center gap-2">
+              🔧 Setup Instructions for Full AI Features
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="bg-white p-4 rounded-lg border border-yellow-200">
+              <h6 className="font-semibold text-black mb-2">To enable online AI features:</h6>
+              <ol className="list-decimal list-inside space-y-2 text-black">
+                <li>Get your OpenAI API key from <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-medium">platform.openai.com</a></li>
+                <li>Create a <code className="bg-gray-100 px-2 py-1 rounded text-sm">.env</code> file in your project root</li>
+                <li>Add: <code className="bg-gray-100 px-2 py-1 rounded text-sm">REACT_APP_OPENAI_API_KEY=your_api_key_here</code></li>
+                <li>Restart your development server</li>
+              </ol>
+            </div>
+            <Badge className="bg-yellow-100 text-yellow-800">
+              💡 With API key: Real ChatGPT responses + DALL-E image generation
+            </Badge>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
