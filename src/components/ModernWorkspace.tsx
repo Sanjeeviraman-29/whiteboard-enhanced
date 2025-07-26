@@ -655,21 +655,46 @@ const ModernWorkspace: React.FC = () => {
     }
   }, [brightness, contrast, saturation, blur, hue, sepia, grayscale, invert, rotation, flipHorizontal, flipVertical]);
 
+  const clearCanvas = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Clear canvas and reset background
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Clear elements and update history
+    setElements([]);
+    const newHistory = [...history.slice(0, historyStep + 1), []];
+    setHistory(newHistory);
+    setHistoryStep(newHistory.length - 1);
+  };
+
   // Initialize canvas
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    
+
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    
+
     // Set canvas size
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
-    
+
     // Clear and set background
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Initialize history with empty state
+    if (history.length === 0) {
+      setHistory([[]]);
+      setHistoryStep(0);
+    }
   }, []);
 
   return (
